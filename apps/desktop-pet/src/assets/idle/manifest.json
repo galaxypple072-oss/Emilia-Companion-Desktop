@@ -1,0 +1,144 @@
+{
+  "source": "emilia-idle-loop-direct-v3.png",
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "frameWidth": 423,
+  "frameHeight": 452,
+  "delayMs": 180,
+  "loop": true,
+  "alpha": "unassociated RGBA",
+  "resized": false,
+  "frames": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "background": [
+        206,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 1994
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "background": [
+        208,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2541
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "background": [
+        209,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2922
+    },
+    {
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "background": [
+        208,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 1988
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "background": [
+        205,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2079
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "background": [
+        207,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2528
+    },
+    {
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "background": [
+        207,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2842
+    },
+    {
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "background": [
+        207,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2063
+    }
+  ],
+  "alignment": {
+    "version": 1,
+    "method": "face-center-and-ground-anchor",
+    "target": {
+      "faceX": 211,
+      "groundY": 421
+    },
+    "offsets": [
+      {
+        "x": 9,
+        "y": 0
+      },
+      {
+        "x": 12,
+        "y": 1
+      },
+      {
+        "x": 17,
+        "y": 0
+      },
+      {
+        "x": 20,
+        "y": 0
+      },
+      {
+        "x": 12,
+        "y": 7
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 16,
+        "y": 7
+      },
+      {
+        "x": 21,
+        "y": 7
+      }
+    ]
+  }
+}

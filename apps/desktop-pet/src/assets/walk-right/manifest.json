@@ -1,0 +1,156 @@
+{
+  "source": "emilia-walk-right-direct-v1.png",
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "frameWidth": 425,
+  "frameHeight": 450,
+  "delayMs": 120,
+  "rowOffsetsY": [
+    0,
+    6
+  ],
+  "loop": true,
+  "alpha": "unassociated RGBA",
+  "resized": false,
+  "frames": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "offsetY": 0,
+      "background": [
+        200,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 1997
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "offsetY": 0,
+      "background": [
+        200,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2004
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "offsetY": 0,
+      "background": [
+        201,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2543
+    },
+    {
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "offsetY": 0,
+      "background": [
+        201,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2107
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "offsetY": 6,
+      "background": [
+        200,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 2194
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "offsetY": 6,
+      "background": [
+        201,
+        2,
+        2
+      ],
+      "partialAlphaPixels": 2143
+    },
+    {
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "offsetY": 6,
+      "background": [
+        201,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 2577
+    },
+    {
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "offsetY": 6,
+      "background": [
+        201,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2138
+    }
+  ],
+  "alignment": {
+    "version": 1,
+    "method": "face-center-and-ground-anchor",
+    "target": {
+      "faceX": 211,
+      "groundY": 421
+    },
+    "offsets": [
+      {
+        "x": -19,
+        "y": 15
+      },
+      {
+        "x": -12,
+        "y": 17
+      },
+      {
+        "x": -10,
+        "y": 12
+      },
+      {
+        "x": -8,
+        "y": 17
+      },
+      {
+        "x": -17,
+        "y": 14
+      },
+      {
+        "x": -12,
+        "y": 13
+      },
+      {
+        "x": -9,
+        "y": 12
+      },
+      {
+        "x": -13,
+        "y": 14
+      }
+    ]
+  }
+}

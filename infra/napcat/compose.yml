@@ -1,0 +1,17 @@
+services:
+  napcat:
+    image: mlikiowa/napcat-docker:latest
+    container_name: personal-companion-napcat
+    restart: unless-stopped
+    environment:
+      NAPCAT_UID: "${NAPCAT_UID:-1000}"
+      NAPCAT_GID: "${NAPCAT_GID:-1000}"
+      WEBUI_TOKEN: "${NAPCAT_WEBUI_TOKEN:?NAPCAT_WEBUI_TOKEN is required}"
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3001"
+      - "127.0.0.1:6099:6099"
+    volumes:
+      - ./data/config:/app/napcat/config
+      - ./data/qq:/app/.config/QQ
+    shm_size: "512mb"

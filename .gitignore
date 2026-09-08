@@ -1,0 +1,18 @@
+.env
+.env.napcat
+.DS_Store
+node_modules/
+coverage/
+dist/
+data/
+*.log
+infra/napcat/data/
+# Build artifacts and local tool state are reproducible and routinely exceed
+# GitHub's file-size limits. Release binaries belong in GitHub Releases.
+**/target/
+apps/desktop-pet/bin/
+.dsh/
+# This is an operator handoff containing local machine topology; keep it local.
+HANDOFF-*.md
+# Licensed/local-only media sources and generated voice models must never enter git.
+private-assets/

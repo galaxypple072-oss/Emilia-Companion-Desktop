@@ -1,0 +1,1992 @@
+{
+  "summary": {
+    "models": 198,
+    "textures": 201,
+    "motions": 9211,
+    "expressions": 23,
+    "bytes": 403187423,
+    "modelsWithMissingReferences": 0
+  },
+  "models": [
+    {
+      "id": "ac_base_al01",
+      "modelFile": "ac_base_al01.model3.json",
+      "mocFile": "ac_base_al01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 4,
+      "totalBytes": 1084609,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_alcor01",
+      "modelFile": "ac_base_alcor01.model3.json",
+      "mocFile": "ac_base_alcor01.moc3",
+      "textures": 1,
+      "motions": 38,
+      "expressions": 0,
+      "totalBytes": 2689563,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_alcor02",
+      "modelFile": "ac_base_alcor02.model3.json",
+      "mocFile": "ac_base_alcor02.moc3",
+      "textures": 1,
+      "motions": 54,
+      "expressions": 0,
+      "totalBytes": 2823424,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_anastasia01",
+      "modelFile": "ac_base_anastasia01.model3.json",
+      "mocFile": "ac_base_anastasia01.moc3",
+      "textures": 1,
+      "motions": 41,
+      "expressions": 0,
+      "totalBytes": 2362066,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_anastasia_dress01",
+      "modelFile": "ac_base_anastasia_dress01.model3.json",
+      "mocFile": "ac_base_anastasia_dress01.moc3",
+      "textures": 1,
+      "motions": 39,
+      "expressions": 0,
+      "totalBytes": 1768585,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_anastasia_kimono01",
+      "modelFile": "ac_base_anastasia_kimono01.model3.json",
+      "mocFile": "ac_base_anastasia_kimono01.moc3",
+      "textures": 1,
+      "motions": 36,
+      "expressions": 0,
+      "totalBytes": 1961261,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_anastasia_private01",
+      "modelFile": "ac_base_anastasia_private01.model3.json",
+      "mocFile": "ac_base_anastasia_private01.moc3",
+      "textures": 1,
+      "motions": 41,
+      "expressions": 0,
+      "totalBytes": 2132375,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_beatrice01",
+      "modelFile": "ac_base_beatrice01.model3.json",
+      "mocFile": "ac_base_beatrice01.moc3",
+      "textures": 1,
+      "motions": 74,
+      "expressions": 0,
+      "totalBytes": 3040448,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_beatrice_after20y01",
+      "modelFile": "ac_base_beatrice_after20y01.model3.json",
+      "mocFile": "ac_base_beatrice_after20y01.moc3",
+      "textures": 1,
+      "motions": 94,
+      "expressions": 0,
+      "totalBytes": 3480588,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_beatrice_halloween01",
+      "modelFile": "ac_base_beatrice_halloween01.model3.json",
+      "mocFile": "ac_base_beatrice_halloween01.moc3",
+      "textures": 1,
+      "motions": 82,
+      "expressions": 0,
+      "totalBytes": 3047772,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_beatrice_mizugi01",
+      "modelFile": "ac_base_beatrice_mizugi01.model3.json",
+      "mocFile": "ac_base_beatrice_mizugi01.moc3",
+      "textures": 1,
+      "motions": 74,
+      "expressions": 0,
+      "totalBytes": 2617269,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_bordeaux01",
+      "modelFile": "ac_base_bordeaux01.model3.json",
+      "mocFile": "ac_base_bordeaux01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1493492,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_bossghost01",
+      "modelFile": "ac_base_bossghost01.model3.json",
+      "mocFile": "ac_base_bossghost01.moc3",
+      "textures": 1,
+      "motions": 19,
+      "expressions": 0,
+      "totalBytes": 2823989,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_cain01",
+      "modelFile": "ac_base_cain01.model3.json",
+      "mocFile": "ac_base_cain01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 934789,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_chin01",
+      "modelFile": "ac_base_chin01.model3.json",
+      "mocFile": "ac_base_chin01.moc3",
+      "textures": 1,
+      "motions": 32,
+      "expressions": 0,
+      "totalBytes": 1176498,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_chin_prison01",
+      "modelFile": "ac_base_chin_prison01.model3.json",
+      "mocFile": "ac_base_chin_prison01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1338638,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_beast01",
+      "modelFile": "ac_base_citizen_beast01.model3.json",
+      "mocFile": "ac_base_citizen_beast01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1243600,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_boy01",
+      "modelFile": "ac_base_citizen_boy01.model3.json",
+      "mocFile": "ac_base_citizen_boy01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 892354,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_girl01",
+      "modelFile": "ac_base_citizen_girl01.model3.json",
+      "mocFile": "ac_base_citizen_girl01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 871660,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_hood01",
+      "modelFile": "ac_base_citizen_hood01.model3.json",
+      "mocFile": "ac_base_citizen_hood01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 731747,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_man01",
+      "modelFile": "ac_base_citizen_man01.model3.json",
+      "mocFile": "ac_base_citizen_man01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 876968,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_oldman01",
+      "modelFile": "ac_base_citizen_oldman01.model3.json",
+      "mocFile": "ac_base_citizen_oldman01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 841698,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_oldwoman01",
+      "modelFile": "ac_base_citizen_oldwoman01.model3.json",
+      "mocFile": "ac_base_citizen_oldwoman01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1024947,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_citizen_woman01",
+      "modelFile": "ac_base_citizen_woman01.model3.json",
+      "mocFile": "ac_base_citizen_woman01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 789530,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_conwood01",
+      "modelFile": "ac_base_conwood01.model3.json",
+      "mocFile": "ac_base_conwood01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 956963,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_crusch01",
+      "modelFile": "ac_base_crusch01.model3.json",
+      "mocFile": "ac_base_crusch01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 2098637,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_crusch_armor01",
+      "modelFile": "ac_base_crusch_armor01.model3.json",
+      "mocFile": "ac_base_crusch_armor01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 2008467,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_crusch_dress01",
+      "modelFile": "ac_base_crusch_dress01.model3.json",
+      "mocFile": "ac_base_crusch_dress01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 1611413,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_crusch_kimono01",
+      "modelFile": "ac_base_crusch_kimono01.model3.json",
+      "mocFile": "ac_base_crusch_kimono01.moc3",
+      "textures": 1,
+      "motions": 40,
+      "expressions": 0,
+      "totalBytes": 1582524,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_crusch_nemaki01",
+      "modelFile": "ac_base_crusch_nemaki01.model3.json",
+      "mocFile": "ac_base_crusch_nemaki01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 1738343,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_dine01",
+      "modelFile": "ac_base_dine01.model3.json",
+      "mocFile": "ac_base_dine01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 871146,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_echidna01",
+      "modelFile": "ac_base_echidna01.model3.json",
+      "mocFile": "ac_base_echidna01.moc3",
+      "textures": 1,
+      "motions": 68,
+      "expressions": 0,
+      "totalBytes": 3067836,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_elsa01",
+      "modelFile": "ac_base_elsa01.model3.json",
+      "mocFile": "ac_base_elsa01.moc3",
+      "textures": 1,
+      "motions": 37,
+      "expressions": 0,
+      "totalBytes": 2313616,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_elsa_after20y01",
+      "modelFile": "ac_base_elsa_after20y01.model3.json",
+      "mocFile": "ac_base_elsa_after20y01.moc3",
+      "textures": 1,
+      "motions": 39,
+      "expressions": 0,
+      "totalBytes": 2350442,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_elsa_nomantle01",
+      "modelFile": "ac_base_elsa_nomantle01.model3.json",
+      "mocFile": "ac_base_elsa_nomantle01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 2124226,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_elsa_wedding01",
+      "modelFile": "ac_base_elsa_wedding01.model3.json",
+      "mocFile": "ac_base_elsa_wedding01.moc3",
+      "textures": 1,
+      "motions": 37,
+      "expressions": 0,
+      "totalBytes": 2269402,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia01",
+      "modelFile": "ac_base_emilia01.model3.json",
+      "mocFile": "ac_base_emilia01.moc3",
+      "textures": 1,
+      "motions": 128,
+      "expressions": 0,
+      "totalBytes": 3793578,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia02",
+      "modelFile": "ac_base_emilia02.model3.json",
+      "mocFile": "ac_base_emilia02.moc3",
+      "textures": 1,
+      "motions": 131,
+      "expressions": 0,
+      "totalBytes": 3845822,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_dress01",
+      "modelFile": "ac_base_emilia_dress01.model3.json",
+      "mocFile": "ac_base_emilia_dress01.moc3",
+      "textures": 1,
+      "motions": 111,
+      "expressions": 0,
+      "totalBytes": 3074282,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_hood01",
+      "modelFile": "ac_base_emilia_hood01.model3.json",
+      "mocFile": "ac_base_emilia_hood01.moc3",
+      "textures": 2,
+      "motions": 130,
+      "expressions": 0,
+      "totalBytes": 5007608,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_mizugi01",
+      "modelFile": "ac_base_emilia_mizugi01.model3.json",
+      "mocFile": "ac_base_emilia_mizugi01.moc3",
+      "textures": 1,
+      "motions": 115,
+      "expressions": 0,
+      "totalBytes": 3295255,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_nemaki01",
+      "modelFile": "ac_base_emilia_nemaki01.model3.json",
+      "mocFile": "ac_base_emilia_nemaki01.moc3",
+      "textures": 1,
+      "motions": 114,
+      "expressions": 0,
+      "totalBytes": 3313363,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_nemaki02",
+      "modelFile": "ac_base_emilia_nemaki02.model3.json",
+      "mocFile": "ac_base_emilia_nemaki02.moc3",
+      "textures": 1,
+      "motions": 114,
+      "expressions": 0,
+      "totalBytes": 3391362,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_nemaki03",
+      "modelFile": "ac_base_emilia_nemaki03.model3.json",
+      "mocFile": "ac_base_emilia_nemaki03.moc3",
+      "textures": 1,
+      "motions": 118,
+      "expressions": 0,
+      "totalBytes": 4266110,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_wedding01",
+      "modelFile": "ac_base_emilia_wedding01.model3.json",
+      "mocFile": "ac_base_emilia_wedding01.moc3",
+      "textures": 1,
+      "motions": 118,
+      "expressions": 0,
+      "totalBytes": 3264208,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_emilia_xmas01",
+      "modelFile": "ac_base_emilia_xmas01.model3.json",
+      "mocFile": "ac_base_emilia_xmas01.moc3",
+      "textures": 1,
+      "motions": 112,
+      "expressions": 0,
+      "totalBytes": 3212170,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_felt01",
+      "modelFile": "ac_base_felt01.model3.json",
+      "mocFile": "ac_base_felt01.moc3",
+      "textures": 1,
+      "motions": 59,
+      "expressions": 0,
+      "totalBytes": 2371625,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_felt_beast01",
+      "modelFile": "ac_base_felt_beast01.model3.json",
+      "mocFile": "ac_base_felt_beast01.moc3",
+      "textures": 1,
+      "motions": 62,
+      "expressions": 0,
+      "totalBytes": 2507542,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_felt_dress01",
+      "modelFile": "ac_base_felt_dress01.model3.json",
+      "mocFile": "ac_base_felt_dress01.moc3",
+      "textures": 1,
+      "motions": 65,
+      "expressions": 0,
+      "totalBytes": 2257535,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_felt_newyear01",
+      "modelFile": "ac_base_felt_newyear01.model3.json",
+      "mocFile": "ac_base_felt_newyear01.moc3",
+      "textures": 1,
+      "motions": 62,
+      "expressions": 0,
+      "totalBytes": 2750029,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ferris01",
+      "modelFile": "ac_base_ferris01.model3.json",
+      "mocFile": "ac_base_ferris01.moc3",
+      "textures": 1,
+      "motions": 41,
+      "expressions": 0,
+      "totalBytes": 1882306,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ferris_after20y01",
+      "modelFile": "ac_base_ferris_after20y01.model3.json",
+      "mocFile": "ac_base_ferris_after20y01.moc3",
+      "textures": 1,
+      "motions": 50,
+      "expressions": 0,
+      "totalBytes": 2089554,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ferris_dress01",
+      "modelFile": "ac_base_ferris_dress01.model3.json",
+      "mocFile": "ac_base_ferris_dress01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 1910138,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ferris_kimono01",
+      "modelFile": "ac_base_ferris_kimono01.model3.json",
+      "mocFile": "ac_base_ferris_kimono01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 1711869,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ferris_robe01",
+      "modelFile": "ac_base_ferris_robe01.model3.json",
+      "mocFile": "ac_base_ferris_robe01.moc3",
+      "textures": 1,
+      "motions": 41,
+      "expressions": 0,
+      "totalBytes": 1649157,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_frederica01",
+      "modelFile": "ac_base_frederica01.model3.json",
+      "mocFile": "ac_base_frederica01.moc3",
+      "textures": 1,
+      "motions": 60,
+      "expressions": 0,
+      "totalBytes": 2423249,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_garfiel01",
+      "modelFile": "ac_base_garfiel01.model3.json",
+      "mocFile": "ac_base_garfiel01.moc3",
+      "textures": 1,
+      "motions": 58,
+      "expressions": 0,
+      "totalBytes": 2141749,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ghost01",
+      "modelFile": "ac_base_ghost01.model3.json",
+      "mocFile": "ac_base_ghost01.moc3",
+      "textures": 1,
+      "motions": 8,
+      "expressions": 7,
+      "totalBytes": 2292308,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ghost02",
+      "modelFile": "ac_base_ghost02.model3.json",
+      "mocFile": "ac_base_ghost02.moc3",
+      "textures": 1,
+      "motions": 8,
+      "expressions": 7,
+      "totalBytes": 1779409,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_governor01",
+      "modelFile": "ac_base_governor01.model3.json",
+      "mocFile": "ac_base_governor01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1615948,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_green01",
+      "modelFile": "ac_base_green01.model3.json",
+      "mocFile": "ac_base_green01.moc3",
+      "textures": 1,
+      "motions": 35,
+      "expressions": 0,
+      "totalBytes": 1148302,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_greenmama01",
+      "modelFile": "ac_base_greenmama01.model3.json",
+      "mocFile": "ac_base_greenmama01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1094590,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_hetaro01",
+      "modelFile": "ac_base_hetaro01.model3.json",
+      "mocFile": "ac_base_hetaro01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1557023,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_hetaro_musha01",
+      "modelFile": "ac_base_hetaro_musha01.model3.json",
+      "mocFile": "ac_base_hetaro_musha01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1665321,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_hetaro_prison01",
+      "modelFile": "ac_base_hetaro_prison01.model3.json",
+      "mocFile": "ac_base_hetaro_prison01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1367917,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_julius01",
+      "modelFile": "ac_base_julius01.model3.json",
+      "mocFile": "ac_base_julius01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 1663901,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_julius_jersey01",
+      "modelFile": "ac_base_julius_jersey01.model3.json",
+      "mocFile": "ac_base_julius_jersey01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1431126,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_julius_kimono01",
+      "modelFile": "ac_base_julius_kimono01.model3.json",
+      "mocFile": "ac_base_julius_kimono01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1443080,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_julius_mantleoff01",
+      "modelFile": "ac_base_julius_mantleoff01.model3.json",
+      "mocFile": "ac_base_julius_mantleoff01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1040897,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_kadomon01",
+      "modelFile": "ac_base_kadomon01.model3.json",
+      "mocFile": "ac_base_kadomon01.moc3",
+      "textures": 1,
+      "motions": 32,
+      "expressions": 0,
+      "totalBytes": 1704425,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_kan01",
+      "modelFile": "ac_base_kan01.model3.json",
+      "mocFile": "ac_base_kan01.moc3",
+      "textures": 1,
+      "motions": 32,
+      "expressions": 0,
+      "totalBytes": 1121176,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_kan_prison01",
+      "modelFile": "ac_base_kan_prison01.model3.json",
+      "mocFile": "ac_base_kan_prison01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1256074,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_katy01",
+      "modelFile": "ac_base_katy01.model3.json",
+      "mocFile": "ac_base_katy01.moc3",
+      "textures": 1,
+      "motions": 32,
+      "expressions": 0,
+      "totalBytes": 1306055,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_knight01",
+      "modelFile": "ac_base_knight01.model3.json",
+      "mocFile": "ac_base_knight01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1464907,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ledhal01",
+      "modelFile": "ac_base_ledhal01.model3.json",
+      "mocFile": "ac_base_ledhal01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1696282,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_lilac01",
+      "modelFile": "ac_base_lilac01.model3.json",
+      "mocFile": "ac_base_lilac01.moc3",
+      "textures": 1,
+      "motions": 57,
+      "expressions": 0,
+      "totalBytes": 2379925,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_lucas01",
+      "modelFile": "ac_base_lucas01.model3.json",
+      "mocFile": "ac_base_lucas01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1141249,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_maina01",
+      "modelFile": "ac_base_maina01.model3.json",
+      "mocFile": "ac_base_maina01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1132254,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_majyu_monkey01",
+      "modelFile": "ac_base_majyu_monkey01.model3.json",
+      "mocFile": "ac_base_majyu_monkey01.moc3",
+      "textures": 1,
+      "motions": 17,
+      "expressions": 0,
+      "totalBytes": 985687,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_majyu_monkey_boss01",
+      "modelFile": "ac_base_majyu_monkey_boss01.model3.json",
+      "mocFile": "ac_base_majyu_monkey_boss01.moc3",
+      "textures": 1,
+      "motions": 17,
+      "expressions": 0,
+      "totalBytes": 1286243,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_makiji01",
+      "modelFile": "ac_base_makiji01.model3.json",
+      "mocFile": "ac_base_makiji01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 900295,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_marcos01",
+      "modelFile": "ac_base_marcos01.model3.json",
+      "mocFile": "ac_base_marcos01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1589320,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_mary01",
+      "modelFile": "ac_base_mary01.model3.json",
+      "mocFile": "ac_base_mary01.moc3",
+      "textures": 1,
+      "motions": 37,
+      "expressions": 0,
+      "totalBytes": 1936266,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_miklotov01",
+      "modelFile": "ac_base_miklotov01.model3.json",
+      "mocFile": "ac_base_miklotov01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1420710,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_mild01",
+      "modelFile": "ac_base_mild01.model3.json",
+      "mocFile": "ac_base_mild01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1134772,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_milde01",
+      "modelFile": "ac_base_milde01.model3.json",
+      "mocFile": "ac_base_milde01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 955920,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_mimi01",
+      "modelFile": "ac_base_mimi01.model3.json",
+      "mocFile": "ac_base_mimi01.moc3",
+      "textures": 1,
+      "motions": 39,
+      "expressions": 0,
+      "totalBytes": 1732857,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_mimi_after20y01",
+      "modelFile": "ac_base_mimi_after20y01.model3.json",
+      "mocFile": "ac_base_mimi_after20y01.moc3",
+      "textures": 1,
+      "motions": 39,
+      "expressions": 0,
+      "totalBytes": 1745074,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_mimi_musha01",
+      "modelFile": "ac_base_mimi_musha01.model3.json",
+      "mocFile": "ac_base_mimi_musha01.moc3",
+      "textures": 1,
+      "motions": 39,
+      "expressions": 0,
+      "totalBytes": 2014833,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_muraosa01",
+      "modelFile": "ac_base_muraosa01.model3.json",
+      "mocFile": "ac_base_muraosa01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 906134,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_nobility01",
+      "modelFile": "ac_base_nobility01.model3.json",
+      "mocFile": "ac_base_nobility01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1485338,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_octopus01",
+      "modelFile": "ac_base_octopus01.model3.json",
+      "mocFile": "ac_base_octopus01.moc3",
+      "textures": 1,
+      "motions": 15,
+      "expressions": 0,
+      "totalBytes": 1221742,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_otto01",
+      "modelFile": "ac_base_otto01.model3.json",
+      "mocFile": "ac_base_otto01.moc3",
+      "textures": 1,
+      "motions": 47,
+      "expressions": 0,
+      "totalBytes": 1576087,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_otto_prison01",
+      "modelFile": "ac_base_otto_prison01.model3.json",
+      "mocFile": "ac_base_otto_prison01.moc3",
+      "textures": 1,
+      "motions": 36,
+      "expressions": 0,
+      "totalBytes": 1239805,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_pack01",
+      "modelFile": "ac_base_pack01.model3.json",
+      "mocFile": "ac_base_pack01.moc3",
+      "textures": 1,
+      "motions": 65,
+      "expressions": 0,
+      "totalBytes": 2321775,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_pack_true01",
+      "modelFile": "ac_base_pack_true01.model3.json",
+      "mocFile": "ac_base_pack_true01.moc3",
+      "textures": 1,
+      "motions": 11,
+      "expressions": 0,
+      "totalBytes": 675971,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_patrasche01",
+      "modelFile": "ac_base_patrasche01.model3.json",
+      "mocFile": "ac_base_patrasche01.moc3",
+      "textures": 1,
+      "motions": 51,
+      "expressions": 0,
+      "totalBytes": 1311845,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_petelgeuse01",
+      "modelFile": "ac_base_petelgeuse01.model3.json",
+      "mocFile": "ac_base_petelgeuse01.moc3",
+      "textures": 1,
+      "motions": 53,
+      "expressions": 0,
+      "totalBytes": 1967420,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_petelgeuse_undead01",
+      "modelFile": "ac_base_petelgeuse_undead01.model3.json",
+      "mocFile": "ac_base_petelgeuse_undead01.moc3",
+      "textures": 1,
+      "motions": 19,
+      "expressions": 0,
+      "totalBytes": 1877554,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_petelgeuse_undead02",
+      "modelFile": "ac_base_petelgeuse_undead02.model3.json",
+      "mocFile": "ac_base_petelgeuse_undead02.moc3",
+      "textures": 2,
+      "motions": 19,
+      "expressions": 0,
+      "totalBytes": 2555017,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_petra01",
+      "modelFile": "ac_base_petra01.model3.json",
+      "mocFile": "ac_base_petra01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1437851,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_petra_maid01",
+      "modelFile": "ac_base_petra_maid01.model3.json",
+      "mocFile": "ac_base_petra_maid01.moc3",
+      "textures": 1,
+      "motions": 50,
+      "expressions": 0,
+      "totalBytes": 1750227,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_petra_valentine01",
+      "modelFile": "ac_base_petra_valentine01.model3.json",
+      "mocFile": "ac_base_petra_valentine01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1305706,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_pirate01",
+      "modelFile": "ac_base_pirate01.model3.json",
+      "mocFile": "ac_base_pirate01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1245743,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_pirate02",
+      "modelFile": "ac_base_pirate02.model3.json",
+      "mocFile": "ac_base_pirate02.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1212987,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_pirateboss01",
+      "modelFile": "ac_base_pirateboss01.model3.json",
+      "mocFile": "ac_base_pirateboss01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1354509,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_poorman01",
+      "modelFile": "ac_base_poorman01.model3.json",
+      "mocFile": "ac_base_poorman01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1016629,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_priscilla01",
+      "modelFile": "ac_base_priscilla01.model3.json",
+      "mocFile": "ac_base_priscilla01.moc3",
+      "textures": 1,
+      "motions": 38,
+      "expressions": 0,
+      "totalBytes": 2023488,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_priscilla_dress01",
+      "modelFile": "ac_base_priscilla_dress01.model3.json",
+      "mocFile": "ac_base_priscilla_dress01.moc3",
+      "textures": 1,
+      "motions": 37,
+      "expressions": 1,
+      "totalBytes": 1816649,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_priscilla_nemaki01",
+      "modelFile": "ac_base_priscilla_nemaki01.model3.json",
+      "mocFile": "ac_base_priscilla_nemaki01.moc3",
+      "textures": 1,
+      "motions": 38,
+      "expressions": 0,
+      "totalBytes": 1894416,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_priscilla_xmas01",
+      "modelFile": "ac_base_priscilla_xmas01.model3.json",
+      "mocFile": "ac_base_priscilla_xmas01.moc3",
+      "textures": 1,
+      "motions": 47,
+      "expressions": 0,
+      "totalBytes": 2145918,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_prisoner01",
+      "modelFile": "ac_base_prisoner01.model3.json",
+      "mocFile": "ac_base_prisoner01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1259522,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_prisoner02",
+      "modelFile": "ac_base_prisoner02.model3.json",
+      "mocFile": "ac_base_prisoner02.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1478320,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_prisonguard01",
+      "modelFile": "ac_base_prisonguard01.model3.json",
+      "mocFile": "ac_base_prisonguard01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1313909,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_prisonguard02",
+      "modelFile": "ac_base_prisonguard02.model3.json",
+      "mocFile": "ac_base_prisonguard02.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1218970,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram01",
+      "modelFile": "ac_base_ram01.model3.json",
+      "mocFile": "ac_base_ram01.moc3",
+      "textures": 1,
+      "motions": 69,
+      "expressions": 0,
+      "totalBytes": 3424264,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram_childhood01",
+      "modelFile": "ac_base_ram_childhood01.model3.json",
+      "mocFile": "ac_base_ram_childhood01.moc3",
+      "textures": 1,
+      "motions": 37,
+      "expressions": 0,
+      "totalBytes": 1642446,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram_hood01",
+      "modelFile": "ac_base_ram_hood01.model3.json",
+      "mocFile": "ac_base_ram_hood01.moc3",
+      "textures": 1,
+      "motions": 70,
+      "expressions": 0,
+      "totalBytes": 3596967,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram_mizugi01",
+      "modelFile": "ac_base_ram_mizugi01.model3.json",
+      "mocFile": "ac_base_ram_mizugi01.moc3",
+      "textures": 1,
+      "motions": 69,
+      "expressions": 0,
+      "totalBytes": 2961448,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram_nemaki01",
+      "modelFile": "ac_base_ram_nemaki01.model3.json",
+      "mocFile": "ac_base_ram_nemaki01.moc3",
+      "textures": 1,
+      "motions": 65,
+      "expressions": 0,
+      "totalBytes": 2870540,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram_valentine01",
+      "modelFile": "ac_base_ram_valentine01.model3.json",
+      "mocFile": "ac_base_ram_valentine01.moc3",
+      "textures": 1,
+      "motions": 65,
+      "expressions": 0,
+      "totalBytes": 3087922,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ram_xmas01",
+      "modelFile": "ac_base_ram_xmas01.model3.json",
+      "mocFile": "ac_base_ram_xmas01.moc3",
+      "textures": 1,
+      "motions": 68,
+      "expressions": 0,
+      "totalBytes": 3101359,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rebark01",
+      "modelFile": "ac_base_rebark01.model3.json",
+      "mocFile": "ac_base_rebark01.moc3",
+      "textures": 1,
+      "motions": 17,
+      "expressions": 4,
+      "totalBytes": 1573047,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_regulus01",
+      "modelFile": "ac_base_regulus01.model3.json",
+      "mocFile": "ac_base_regulus01.moc3",
+      "textures": 1,
+      "motions": 43,
+      "expressions": 0,
+      "totalBytes": 2372221,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_reinhard01",
+      "modelFile": "ac_base_reinhard01.model3.json",
+      "mocFile": "ac_base_reinhard01.moc3",
+      "textures": 1,
+      "motions": 38,
+      "expressions": 0,
+      "totalBytes": 2069996,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_reinhard_formal01",
+      "modelFile": "ac_base_reinhard_formal01.model3.json",
+      "mocFile": "ac_base_reinhard_formal01.moc3",
+      "textures": 1,
+      "motions": 37,
+      "expressions": 0,
+      "totalBytes": 1904777,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_reinhard_newyear01",
+      "modelFile": "ac_base_reinhard_newyear01.model3.json",
+      "mocFile": "ac_base_reinhard_newyear01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1752178,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem01",
+      "modelFile": "ac_base_rem01.model3.json",
+      "mocFile": "ac_base_rem01.moc3",
+      "textures": 1,
+      "motions": 96,
+      "expressions": 0,
+      "totalBytes": 4206393,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_childhood01",
+      "modelFile": "ac_base_rem_childhood01.model3.json",
+      "mocFile": "ac_base_rem_childhood01.moc3",
+      "textures": 1,
+      "motions": 40,
+      "expressions": 0,
+      "totalBytes": 1847800,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_mizugi01",
+      "modelFile": "ac_base_rem_mizugi01.model3.json",
+      "mocFile": "ac_base_rem_mizugi01.moc3",
+      "textures": 1,
+      "motions": 79,
+      "expressions": 0,
+      "totalBytes": 3338729,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_nemaki01",
+      "modelFile": "ac_base_rem_nemaki01.model3.json",
+      "mocFile": "ac_base_rem_nemaki01.moc3",
+      "textures": 1,
+      "motions": 65,
+      "expressions": 0,
+      "totalBytes": 3100415,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_ogre01",
+      "modelFile": "ac_base_rem_ogre01.model3.json",
+      "mocFile": "ac_base_rem_ogre01.moc3",
+      "textures": 1,
+      "motions": 65,
+      "expressions": 0,
+      "totalBytes": 3467994,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_ogre_normal01",
+      "modelFile": "ac_base_rem_ogre_normal01.model3.json",
+      "mocFile": "ac_base_rem_ogre_normal01.moc3",
+      "textures": 1,
+      "motions": 55,
+      "expressions": 0,
+      "totalBytes": 3278425,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_pokerface01",
+      "modelFile": "ac_base_rem_pokerface01.model3.json",
+      "mocFile": "ac_base_rem_pokerface01.moc3",
+      "textures": 1,
+      "motions": 62,
+      "expressions": 0,
+      "totalBytes": 3264938,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_valentine01",
+      "modelFile": "ac_base_rem_valentine01.model3.json",
+      "mocFile": "ac_base_rem_valentine01.moc3",
+      "textures": 1,
+      "motions": 67,
+      "expressions": 0,
+      "totalBytes": 3621570,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rem_xmas01",
+      "modelFile": "ac_base_rem_xmas01.model3.json",
+      "mocFile": "ac_base_rem_xmas01.moc3",
+      "textures": 1,
+      "motions": 79,
+      "expressions": 0,
+      "totalBytes": 3051665,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_reproducer01",
+      "modelFile": "ac_base_reproducer01.model3.json",
+      "mocFile": "ac_base_reproducer01.moc3",
+      "textures": 2,
+      "motions": 0,
+      "expressions": 0,
+      "totalBytes": 731878,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ricardo01",
+      "modelFile": "ac_base_ricardo01.model3.json",
+      "mocFile": "ac_base_ricardo01.moc3",
+      "textures": 1,
+      "motions": 36,
+      "expressions": 0,
+      "totalBytes": 1764425,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ricardo_prison01",
+      "modelFile": "ac_base_ricardo_prison01.model3.json",
+      "mocFile": "ac_base_ricardo_prison01.moc3",
+      "textures": 1,
+      "motions": 38,
+      "expressions": 0,
+      "totalBytes": 1982580,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rickert01",
+      "modelFile": "ac_base_rickert01.model3.json",
+      "mocFile": "ac_base_rickert01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1442025,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rom01",
+      "modelFile": "ac_base_rom01.model3.json",
+      "mocFile": "ac_base_rom01.moc3",
+      "textures": 1,
+      "motions": 38,
+      "expressions": 0,
+      "totalBytes": 1489122,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_roswaal01",
+      "modelFile": "ac_base_roswaal01.model3.json",
+      "mocFile": "ac_base_roswaal01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1706027,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_roswaal_formal01",
+      "modelFile": "ac_base_roswaal_formal01.model3.json",
+      "mocFile": "ac_base_roswaal_formal01.moc3",
+      "textures": 1,
+      "motions": 33,
+      "expressions": 0,
+      "totalBytes": 1342456,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_roswaal_halloween01",
+      "modelFile": "ac_base_roswaal_halloween01.model3.json",
+      "mocFile": "ac_base_roswaal_halloween01.moc3",
+      "textures": 1,
+      "motions": 33,
+      "expressions": 0,
+      "totalBytes": 1677116,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_roswaal_nude01",
+      "modelFile": "ac_base_roswaal_nude01.model3.json",
+      "mocFile": "ac_base_roswaal_nude01.moc3",
+      "textures": 1,
+      "motions": 33,
+      "expressions": 0,
+      "totalBytes": 1775757,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_roswaal_yukata01",
+      "modelFile": "ac_base_roswaal_yukata01.model3.json",
+      "mocFile": "ac_base_roswaal_yukata01.moc3",
+      "textures": 1,
+      "motions": 33,
+      "expressions": 0,
+      "totalBytes": 1841472,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rowdy01",
+      "modelFile": "ac_base_rowdy01.model3.json",
+      "mocFile": "ac_base_rowdy01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1297323,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_rowdy02",
+      "modelFile": "ac_base_rowdy02.model3.json",
+      "mocFile": "ac_base_rowdy02.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1173240,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_russell01",
+      "modelFile": "ac_base_russell01.model3.json",
+      "mocFile": "ac_base_russell01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1162007,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_satella_shadow01",
+      "modelFile": "ac_base_satella_shadow01.model3.json",
+      "mocFile": "ac_base_satella_shadow01.moc3",
+      "textures": 1,
+      "motions": 9,
+      "expressions": 0,
+      "totalBytes": 2757167,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_schuldt01",
+      "modelFile": "ac_base_schuldt01.model3.json",
+      "mocFile": "ac_base_schuldt01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1326551,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_shark01",
+      "modelFile": "ac_base_shark01.model3.json",
+      "mocFile": "ac_base_shark01.moc3",
+      "textures": 1,
+      "motions": 15,
+      "expressions": 0,
+      "totalBytes": 1010863,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_shion01",
+      "modelFile": "ac_base_shion01.model3.json",
+      "mocFile": "ac_base_shion01.moc3",
+      "textures": 1,
+      "motions": 60,
+      "expressions": 0,
+      "totalBytes": 2868036,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_shion_previous01",
+      "modelFile": "ac_base_shion_previous01.model3.json",
+      "mocFile": "ac_base_shion_previous01.moc3",
+      "textures": 1,
+      "motions": 51,
+      "expressions": 0,
+      "totalBytes": 1655615,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_soldier01",
+      "modelFile": "ac_base_soldier01.model3.json",
+      "mocFile": "ac_base_soldier01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1206329,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru01",
+      "modelFile": "ac_base_subaru01.model3.json",
+      "mocFile": "ac_base_subaru01.moc3",
+      "textures": 1,
+      "motions": 155,
+      "expressions": 0,
+      "totalBytes": 5019114,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_after20y01",
+      "modelFile": "ac_base_subaru_after20y01.model3.json",
+      "mocFile": "ac_base_subaru_after20y01.moc3",
+      "textures": 1,
+      "motions": 71,
+      "expressions": 0,
+      "totalBytes": 2400099,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_after20y02",
+      "modelFile": "ac_base_subaru_after20y02.model3.json",
+      "mocFile": "ac_base_subaru_after20y02.moc3",
+      "textures": 1,
+      "motions": 71,
+      "expressions": 0,
+      "totalBytes": 2320400,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_after20y03",
+      "modelFile": "ac_base_subaru_after20y03.model3.json",
+      "mocFile": "ac_base_subaru_after20y03.moc3",
+      "textures": 1,
+      "motions": 44,
+      "expressions": 0,
+      "totalBytes": 2439537,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_butler01",
+      "modelFile": "ac_base_subaru_butler01.model3.json",
+      "mocFile": "ac_base_subaru_butler01.moc3",
+      "textures": 1,
+      "motions": 150,
+      "expressions": 0,
+      "totalBytes": 4992430,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_gown01",
+      "modelFile": "ac_base_subaru_gown01.model3.json",
+      "mocFile": "ac_base_subaru_gown01.moc3",
+      "textures": 1,
+      "motions": 150,
+      "expressions": 0,
+      "totalBytes": 4930005,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_nude01",
+      "modelFile": "ac_base_subaru_nude01.model3.json",
+      "mocFile": "ac_base_subaru_nude01.moc3",
+      "textures": 1,
+      "motions": 130,
+      "expressions": 0,
+      "totalBytes": 4591542,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_petelgeuse01",
+      "modelFile": "ac_base_subaru_petelgeuse01.model3.json",
+      "mocFile": "ac_base_subaru_petelgeuse01.moc3",
+      "textures": 1,
+      "motions": 58,
+      "expressions": 0,
+      "totalBytes": 3613105,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_prison01",
+      "modelFile": "ac_base_subaru_prison01.model3.json",
+      "mocFile": "ac_base_subaru_prison01.moc3",
+      "textures": 1,
+      "motions": 132,
+      "expressions": 0,
+      "totalBytes": 4469156,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_prison02",
+      "modelFile": "ac_base_subaru_prison02.model3.json",
+      "mocFile": "ac_base_subaru_prison02.moc3",
+      "textures": 1,
+      "motions": 134,
+      "expressions": 0,
+      "totalBytes": 4684449,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_robe01",
+      "modelFile": "ac_base_subaru_robe01.model3.json",
+      "mocFile": "ac_base_subaru_robe01.moc3",
+      "textures": 1,
+      "motions": 133,
+      "expressions": 0,
+      "totalBytes": 5001716,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_shirt01",
+      "modelFile": "ac_base_subaru_shirt01.model3.json",
+      "mocFile": "ac_base_subaru_shirt01.moc3",
+      "textures": 1,
+      "motions": 150,
+      "expressions": 0,
+      "totalBytes": 4869498,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_swimsuit01",
+      "modelFile": "ac_base_subaru_swimsuit01.model3.json",
+      "mocFile": "ac_base_subaru_swimsuit01.moc3",
+      "textures": 1,
+      "motions": 130,
+      "expressions": 0,
+      "totalBytes": 4727529,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_tshirt01",
+      "modelFile": "ac_base_subaru_tshirt01.model3.json",
+      "mocFile": "ac_base_subaru_tshirt01.moc3",
+      "textures": 1,
+      "motions": 130,
+      "expressions": 0,
+      "totalBytes": 4479510,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_subaru_tshirt02",
+      "modelFile": "ac_base_subaru_tshirt02.model3.json",
+      "mocFile": "ac_base_subaru_tshirt02.moc3",
+      "textures": 1,
+      "motions": 130,
+      "expressions": 0,
+      "totalBytes": 4536794,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_tesera01",
+      "modelFile": "ac_base_tesera01.model3.json",
+      "mocFile": "ac_base_tesera01.moc3",
+      "textures": 1,
+      "motions": 36,
+      "expressions": 0,
+      "totalBytes": 1565255,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_theresia01",
+      "modelFile": "ac_base_theresia01.model3.json",
+      "mocFile": "ac_base_theresia01.moc3",
+      "textures": 1,
+      "motions": 35,
+      "expressions": 0,
+      "totalBytes": 2037154,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_theresia_armor01",
+      "modelFile": "ac_base_theresia_armor01.model3.json",
+      "mocFile": "ac_base_theresia_armor01.moc3",
+      "textures": 1,
+      "motions": 35,
+      "expressions": 0,
+      "totalBytes": 1824430,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_theresia_wedding01",
+      "modelFile": "ac_base_theresia_wedding01.model3.json",
+      "mocFile": "ac_base_theresia_wedding01.moc3",
+      "textures": 1,
+      "motions": 35,
+      "expressions": 0,
+      "totalBytes": 1898264,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_tibby01",
+      "modelFile": "ac_base_tibby01.model3.json",
+      "mocFile": "ac_base_tibby01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 1623757,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_tibby_prison01",
+      "modelFile": "ac_base_tibby_prison01.model3.json",
+      "mocFile": "ac_base_tibby_prison01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1380850,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ton01",
+      "modelFile": "ac_base_ton01.model3.json",
+      "mocFile": "ac_base_ton01.moc3",
+      "textures": 1,
+      "motions": 32,
+      "expressions": 0,
+      "totalBytes": 1229274,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ton_prison01",
+      "modelFile": "ac_base_ton_prison01.model3.json",
+      "mocFile": "ac_base_ton_prison01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1527925,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ui_subaru_furimuki",
+      "modelFile": "ac_base_ui_subaru_furimuki.model3.json",
+      "mocFile": "ac_base_ui_subaru_furimuki.moc3",
+      "textures": 1,
+      "motions": 1,
+      "expressions": 0,
+      "totalBytes": 744303,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_ui_subaru_yokomuki",
+      "modelFile": "ac_base_ui_subaru_yokomuki.model3.json",
+      "mocFile": "ac_base_ui_subaru_yokomuki.moc3",
+      "textures": 1,
+      "motions": 1,
+      "expressions": 0,
+      "totalBytes": 566059,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_urugarumu01",
+      "modelFile": "ac_base_urugarumu01.model3.json",
+      "mocFile": "ac_base_urugarumu01.moc3",
+      "textures": 1,
+      "motions": 9,
+      "expressions": 0,
+      "totalBytes": 793928,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_urugarumuboss01",
+      "modelFile": "ac_base_urugarumuboss01.model3.json",
+      "mocFile": "ac_base_urugarumuboss01.moc3",
+      "textures": 1,
+      "motions": 15,
+      "expressions": 0,
+      "totalBytes": 1134421,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_urugarumuboss_true01",
+      "modelFile": "ac_base_urugarumuboss_true01.model3.json",
+      "mocFile": "ac_base_urugarumuboss_true01.moc3",
+      "textures": 1,
+      "motions": 11,
+      "expressions": 0,
+      "totalBytes": 1346220,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_villager_man01",
+      "modelFile": "ac_base_villager_man01.model3.json",
+      "mocFile": "ac_base_villager_man01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 906886,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_villager_woman01",
+      "modelFile": "ac_base_villager_woman01.model3.json",
+      "mocFile": "ac_base_villager_woman01.moc3",
+      "textures": 1,
+      "motions": 23,
+      "expressions": 0,
+      "totalBytes": 864677,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_whitewhale01",
+      "modelFile": "ac_base_whitewhale01.model3.json",
+      "mocFile": "ac_base_whitewhale01.moc3",
+      "textures": 1,
+      "motions": 21,
+      "expressions": 0,
+      "totalBytes": 1156082,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_whitewhale02",
+      "modelFile": "ac_base_whitewhale02.model3.json",
+      "mocFile": "ac_base_whitewhale02.moc3",
+      "textures": 1,
+      "motions": 16,
+      "expressions": 0,
+      "totalBytes": 1424230,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_wilhelm01",
+      "modelFile": "ac_base_wilhelm01.model3.json",
+      "mocFile": "ac_base_wilhelm01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1533384,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_wilhelm_weapon01",
+      "modelFile": "ac_base_wilhelm_weapon01.model3.json",
+      "mocFile": "ac_base_wilhelm_weapon01.moc3",
+      "textures": 1,
+      "motions": 50,
+      "expressions": 0,
+      "totalBytes": 2146252,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_wilhelm_weapon02",
+      "modelFile": "ac_base_wilhelm_weapon02.model3.json",
+      "mocFile": "ac_base_wilhelm_weapon02.moc3",
+      "textures": 1,
+      "motions": 53,
+      "expressions": 0,
+      "totalBytes": 2167305,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_wilhelm_young01",
+      "modelFile": "ac_base_wilhelm_young01.model3.json",
+      "mocFile": "ac_base_wilhelm_young01.moc3",
+      "textures": 1,
+      "motions": 34,
+      "expressions": 0,
+      "totalBytes": 1355325,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_wilhelm_youngmantle01",
+      "modelFile": "ac_base_wilhelm_youngmantle01.model3.json",
+      "mocFile": "ac_base_wilhelm_youngmantle01.moc3",
+      "textures": 1,
+      "motions": 36,
+      "expressions": 0,
+      "totalBytes": 1310063,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_witchcult01",
+      "modelFile": "ac_base_witchcult01.model3.json",
+      "mocFile": "ac_base_witchcult01.moc3",
+      "textures": 1,
+      "motions": 12,
+      "expressions": 0,
+      "totalBytes": 895375,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_yubisaki_man01",
+      "modelFile": "ac_base_yubisaki_man01.model3.json",
+      "mocFile": "ac_base_yubisaki_man01.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1416209,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_yubisaki_man02",
+      "modelFile": "ac_base_yubisaki_man02.model3.json",
+      "mocFile": "ac_base_yubisaki_man02.moc3",
+      "textures": 1,
+      "motions": 24,
+      "expressions": 0,
+      "totalBytes": 1165852,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_yubisaki_woman01",
+      "modelFile": "ac_base_yubisaki_woman01.model3.json",
+      "mocFile": "ac_base_yubisaki_woman01.moc3",
+      "textures": 1,
+      "motions": 33,
+      "expressions": 0,
+      "totalBytes": 1598279,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_yubisaki_woman02",
+      "modelFile": "ac_base_yubisaki_woman02.model3.json",
+      "mocFile": "ac_base_yubisaki_woman02.moc3",
+      "textures": 1,
+      "motions": 33,
+      "expressions": 0,
+      "totalBytes": 1353313,
+      "missingReferences": []
+    },
+    {
+      "id": "ac_base_zelga01",
+      "modelFile": "ac_base_zelga01.model3.json",
+      "mocFile": "ac_base_zelga01.moc3",
+      "textures": 1,
+      "motions": 25,
+      "expressions": 0,
+      "totalBytes": 1585310,
+      "missingReferences": []
+    }
+  ]
+}

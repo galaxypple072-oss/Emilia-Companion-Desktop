@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Emilia Companion</title>
+    <link rel="stylesheet" href="./main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <header class="brand">
+          <span class="brand-orb" aria-hidden="true">E</span>
+          <span><strong>Emilia</strong><small>Personal Companion</small></span>
+        </header>
+        <nav class="primary-nav" aria-label="主导航">
+          <button class="nav-item active" data-page="chat"><span>◌</span>对话</button>
+          <button class="nav-item" data-page="tasks"><span>✓</span>任务</button>
+          <button class="nav-item" data-page="files"><span>⌑</span>文件</button>
+          <button class="nav-item" data-page="devices"><span>◇</span>设备</button>
+          <button class="nav-item" data-page="core"><span>◈</span>Core</button>
+          <button class="nav-item" data-page="memory"><span>✦</span>记忆</button>
+          <button class="nav-item" data-page="proactive"><span>☼</span>主动功能</button>
+          <button class="nav-item" data-page="appearance"><span>♢</span>形象</button>
+        </nav>
+        <footer class="sidebar-footer">
+          <button class="nav-item" data-page="settings"><span>⚙</span>设置</button>
+          <div class="device-summary">
+            <span id="sidebar-status-dot" class="status-dot" data-state="offline"></span>
+            <span><strong id="sidebar-status">Core 离线</strong><small id="sidebar-device">正在读取本机信息</small></span>
+          </div>
+        </footer>
+      </aside>
+
+      <main class="workspace">
+        <section class="page active" data-page-panel="chat">
+          <header class="page-header chat-page-header">
+            <div><span class="eyebrow">CONVERSATION</span><h1>和艾米莉亚聊聊</h1></div>
+            <div id="chat-core-pill" class="status-pill" data-state="offline"><span></span><strong>未连接</strong></div>
+          </header>
+          <div class="chat-layout">
+            <section class="conversation-card">
+              <div id="main-chat-messages" class="main-chat-messages" aria-live="polite">
+                <div id="chat-empty" class="empty-state"><span class="empty-orb">E</span><strong>我在这里</strong><small>从桌宠的快捷输入或这里开始聊天</small></div>
+              </div>
+              <div id="main-typing" class="main-typing" hidden><span></span><span></span><span></span>正在想</div>
+              <form id="main-chat-form" class="main-composer">
+                <textarea id="main-chat-input" rows="1" maxlength="4000" placeholder="和她说点什么…" aria-label="消息"></textarea>
+                <button type="submit" aria-label="发送">↑</button>
+              </form>
+            </section>
+            <aside class="context-rail">
+              <article class="soft-card character-card">
+                <div class="character-glow"></div>
+                <span class="eyebrow">CURRENT MOOD</span>
+                <strong id="current-emotion">平静</strong>
+                <small id="current-activity">在等你说话</small>
+              </article>
+              <article class="soft-card">
+                <span class="eyebrow">QUICK ACCESS</span>
+                <button class="quick-link" data-open-page="tasks"><span>正在进行</span><strong id="active-task-count">暂无任务</strong></button>
+                <button class="quick-link" data-open-page="devices"><span>设备能力</span><strong id="device-grant-count">读取中</strong></button>
+                <button class="quick-link" data-open-page="core"><span>后台服务</span><strong>查看 Core</strong></button>
+              </article>
+            </aside>
+          </div>
+        </section>
+
+        <section class="page" data-page-panel="tasks">
+          <header class="page-header"><div><span class="eyebrow">AUTOMATION</span><h1>任务</h1><p>从 Core 同步提醒、待办和跨设备操作</p></div><button id="task-refresh" class="secondary-action">刷新</button></header>
+          <div class="metric-grid"><article class="metric-card"><span>待办</span><strong id="task-pending-count">—</strong><small>尚未完成的任务</small></article><article class="metric-card"><span>最近到期</span><strong id="task-next-due">—</strong><small>按截止时间排序</small></article><article class="metric-card"><span>同步状态</span><strong id="task-sync-state">等待</strong><small>经加密连接读取 Core</small></article></div>
+          <section class="content-card task-center-card">
+            <div class="section-heading"><div><h2>当前待办</h2><p>完成或取消后会立即写回 Core</p></div></div>
+            <div id="task-list" class="task-list"><div class="task-empty">正在等待 Core…</div></div>
+            <output id="task-result" class="inline-result" data-state="idle">打开本页后自动同步</output>
+          </section>
+        </section>
+
+        <section class="page" data-page-panel="files">
+          <header class="page-header"><div><span class="eyebrow">LOCAL FILES</span><h1>文件</h1><p>只展示你明确授权给本机 Device Agent 的位置</p></div><button id="files-choose-roots" class="primary-action">添加授权目录</button></header>
+          <section class="content-card file-manager">
+            <header class="file-toolbar">
+              <div><h2>本机文件</h2><span id="file-browser-status">选择一个授权目录开始浏览</span></div>
+              <form id="file-search-form" class="file-search-form">
+                <input id="file-search-input" type="search" maxlength="200" placeholder="搜索文件名" aria-label="搜索文件名" />
+                <button type="submit">搜索</button>
+              </form>
+            </header>
+            <div class="file-manager-body">
+              <aside class="file-roots-pane">
+                <div class="pane-heading"><strong>授权位置</strong><span id="file-root-count">0</span></div>
+                <div id="file-root-list" class="root-list"></div>
+              </aside>
+              <section class="file-browser-pane">
+                <nav id="file-breadcrumbs" class="file-breadcrumbs" aria-label="当前目录"></nav>
+                <div class="file-list-heading"><span>名称</span><span>修改时间</span><span>大小</span></div>
+                <div id="file-entry-list" class="file-entry-list"><div class="file-list-empty">尚未打开目录</div></div>
+              </section>
+              <aside id="file-preview-pane" class="file-preview-pane">
+                <div id="file-preview-empty" class="file-preview-empty"><span>⌑</span><strong>选择一个文件</strong><small>可预览文本、代码和常见图片</small></div>
+                <div id="file-preview-content" class="file-preview-content" hidden>
+                  <header><span id="file-preview-icon" class="file-preview-icon">⌑</span><div><strong id="file-preview-name"></strong><small id="file-preview-meta"></small></div></header>
+                  <div id="file-preview-body" class="file-preview-body"></div>
+                  <div class="file-preview-actions">
+                    <button id="file-reveal-button" class="secondary-action" type="button">在文件管理器显示</button>
+                    <button id="file-ask-button" class="primary-action" type="button">交给艾米莉亚</button>
+                    <button id="file-send-qq-button" class="primary-action file-send-qq" type="button">发送到我的 QQ</button>
+                  </div>
+                  <output id="file-send-status" class="file-send-status" aria-live="polite"></output>
+                </div>
+              </aside>
+            </div>
+          </section>
+          <section class="privacy-note"><span>⌾</span><div><strong>按需传输</strong><p>文件平时留在本机；主动发送时经加密中继传到 Core，QQ 上传结束后删除临时副本</p></div></section>
+        </section>
+
+        <section class="page" data-page-panel="devices">
+          <header class="page-header"><div><span class="eyebrow">DEVICE AGENT</span><h1>这台设备</h1><p>管理 Core 可以调用的本机能力</p></div><span id="device-platform-badge" class="platform-badge">检测中</span></header>
+          <div id="device-info-grid" class="metric-grid device-metrics"></div>
+          <section class="content-card"><div class="section-heading"><div><h2>能力与权限</h2><p>关闭后 Core 会立即停止获得对应能力</p></div><span id="permission-count" class="count-badge">0</span></div><div id="main-device-permissions" class="permission-grid"></div></section>
+          <section class="content-card compact-card"><div class="screen-permission-row"><span><strong>系统屏幕录制权限</strong><small id="main-screen-permission">正在检查…</small></span><button id="main-screen-request" class="secondary-action">申请权限</button></div></section>
+          <section class="content-card"><div class="section-heading"><div><h2>最近操作</h2><p>本机 Device Agent 的审计记录</p></div></div><div id="main-device-audit" class="audit-list"></div></section>
+        </section>
+
+        <section class="page" data-page-panel="core">
+          <header class="page-header"><div><span class="eyebrow">EMILIA CORE</span><h1>Core 服务</h1><p>管理独立运行的人格、记忆、QQ 与工具调度模块</p><p id="core-ui-runtime">UI build: 2026-09-06-b · 正在读取运行时地址</p></div><span class="platform-badge">本机服务</span></header>
+          <section class="settings-grid core-page-grid">
+            <article class="content-card core-health-card">
+              <div class="section-heading"><div><h2>连接健康</h2><p id="core-health-detail">正在等待 Device Agent 状态</p></div><span id="core-health-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="service-metrics">
+                <div><span>通信方式</span><strong id="core-health-transport">—</strong></div>
+                <div><span>自动恢复</span><strong id="core-health-recovery">—</strong></div>
+                <div><span>最近状态</span><strong id="core-health-updated">—</strong></div>
+              </div>
+              <output id="core-health-result" class="inline-result" data-state="idle">连接异常时会自动指数退避重连</output>
+            </article>
+            <article class="content-card core-service-card">
+              <div class="section-heading"><div><h2>运行状态</h2><p id="core-service-detail">正在检查托管方式</p></div><span id="core-service-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="service-metrics">
+                <div><span>后台进程</span><strong id="core-service-process">—</strong></div>
+                <div><span>消息通道</span><strong id="core-service-bridge">—</strong></div>
+                <div><span>控制接口</span><strong id="core-service-control-port">—</strong></div>
+              </div>
+              <div id="core-service-actions" class="service-actions">
+                <button type="button" class="secondary-action" data-core-action="start">启动</button>
+                <button type="button" class="secondary-action" data-core-action="stop">停止</button>
+                <button type="button" class="primary-action" data-core-action="restart">重新启动</button>
+                <button type="button" class="secondary-action" id="core-service-refresh">刷新</button>
+              </div>
+              <output id="core-service-result" class="inline-result" data-state="idle">服务管理仅操作固定的 Emilia Core 后台任务</output>
+            </article>
+            <article class="content-card core-service-card voice-service-card">
+              <div class="section-heading"><div><h2>艾米莉亚语音</h2><p id="voice-service-detail">检查本机 GPT-SoVITS 与语音桥接服务</p></div><span id="voice-service-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="service-metrics">
+                <div><span>语音服务</span><strong id="voice-service-process">—</strong></div>
+                <div><span>GPT-SoVITS</span><strong id="voice-service-gradio">—</strong></div>
+                <div><span>最近音频</span><strong id="voice-service-output">—</strong></div>
+              </div>
+              <div class="voice-model-detail"><span>GPT <strong id="voice-service-gpt-weight">—</strong></span><span>SoVITS <strong id="voice-service-sovits-weight">—</strong></span></div>
+              <div class="service-actions">
+                <button type="button" class="primary-action" id="voice-service-diagnose">运行诊断与试听</button>
+                <button type="button" class="secondary-action" data-voice-action="boot_stack">启动完整语音栈</button>
+                <button type="button" class="secondary-action" data-voice-action="restart">重启语音服务</button>
+                <button type="button" class="secondary-action" id="voice-service-refresh">刷新</button>
+              </div>
+              <output id="voice-service-result" class="inline-result" data-state="idle">诊断会在本机生成一条日语试听，不会上传音频或密钥</output>
+            </article>
+            <article class="content-card core-log-card">
+              <div class="section-heading"><div><h2>运行日志</h2><p id="core-log-path">只读取 Core 自己的日志文件</p></div><button type="button" id="core-log-refresh" class="secondary-action">刷新日志</button></div>
+              <pre id="core-log-output" class="core-log-output">打开 Core 页面后读取最近日志</pre>
+            </article>
+            <article class="content-card core-log-card">
+              <div class="section-heading"><div><h2>语音服务日志</h2><p id="voice-log-path">只显示本机语音桥接服务的近期输出</p></div><button type="button" id="voice-log-refresh" class="secondary-action">刷新日志</button></div>
+              <pre id="voice-log-output" class="core-log-output">打开 Core 页面后读取语音服务日志</pre>
+            </article>
+            <article class="content-card core-boundary-card">
+              <div class="section-heading"><div><h2>模块边界</h2><p>Core 不直接持有客户端系统权限</p></div></div>
+              <div class="architecture-list"><div><span>Companion UI</span><small>桌宠、聊天与设置</small></div><div><span>Device Agent</span><small>执行本机授权操作</small></div><div><span>Emilia Core</span><small>人格、记忆、QQ 与工具决策</small></div></div>
+            </article>
+          </section>
+        </section>
+
+        <section class="page" data-page-panel="memory">
+          <header class="page-header"><div><span class="eyebrow">LONG-TERM MEMORY</span><h1>记忆</h1><p>未来你可以在这里查看、修改和删除她记住的内容</p></div></header>
+          <section class="content-card empty-content"><span>✦</span><h2>记忆管理界面已预留</h2><p>会通过 Core 的标准记忆 API 接入，客户端不直接读取 Core 数据库</p></section>
+        </section>
+
+        <section class="page" data-page-panel="proactive">
+          <header class="page-header"><div><span class="eyebrow">PROACTIVE</span><h1>主动功能</h1><p>控制她在什么事件发生时主动来找你</p></div></header>
+          <div class="feature-grid"><article class="feature-card"><span>天气</span><strong>通勤与恶劣天气提醒</strong><small>由 Core 根据常驻城市触发</small><button disabled>等待接入</button></article><article class="feature-card"><span>邮件</span><strong>重要收件提醒</strong><small>筛选真正需要你处理的邮件</small><button disabled>等待接入</button></article><article class="feature-card"><span>发现</span><strong>兴趣内容分享</strong><small>限制频率，不随便发送闲话</small><button disabled>等待接入</button></article></div>
+        </section>
+
+        <section class="page" data-page-panel="appearance">
+          <header class="page-header"><div><span class="eyebrow">CHARACTER</span><h1>形象与换装</h1><p>选择后会立即同步到桌面上的 Live2D</p></div></header>
+          <div id="main-wardrobe" class="main-wardrobe"></div>
+        </section>
+
+        <section class="page" data-page-panel="settings">
+          <header class="page-header"><div><span class="eyebrow">SETTINGS</span><h1>连接与设置</h1><p>客户端只保存连接信息，Core 作为独立后台模块运行</p></div></header>
+          <section class="settings-grid">
+            <article class="content-card connection-card">
+              <div class="section-heading"><div><h2>Emilia Core</h2><p id="main-connection-detail">尚未连接</p></div><div id="settings-status-dot" class="status-dot" data-state="offline"></div></div>
+              <label class="large-field"><span>完整连接码</span><input id="main-connection-code" type="password" spellcheck="false" placeholder="粘贴 emilia-connect1…" /><small>配对信息会进入系统钥匙串，不会写入聊天记录</small></label>
+              <button id="main-quick-connect" class="primary-action wide">验证并连接</button>
+              <output id="main-connection-result" class="inline-result" data-state="idle">等待连接码</output>
+            </article>
+            <article class="content-card">
+              <div class="section-heading"><div><h2>模块职责</h2><p>界面、控制层与 Core 独立运行</p></div></div>
+              <div class="architecture-list"><div><span>Companion UI</span><small>桌宠、聊天与设置；不持有系统权限</small></div><div><span>Device Agent</span><small>本机权限、文件和屏幕操作；可单独关闭</small></div><div><span>Emilia Core</span><small>人格、记忆、QQ 与工具决策；独立后台进程</small></div></div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

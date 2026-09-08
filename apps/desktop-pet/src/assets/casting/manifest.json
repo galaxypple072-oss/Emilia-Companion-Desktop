@@ -1,0 +1,156 @@
+{
+  "source": "emilia-casting-direct-v1.png",
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "frameWidth": 423,
+  "frameHeight": 452,
+  "delayMs": 160,
+  "rowOffsetsY": [
+    0,
+    1
+  ],
+  "loop": true,
+  "alpha": "unassociated RGBA",
+  "resized": false,
+  "frames": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "offsetY": 0,
+      "background": [
+        207,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 1879
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "offsetY": 0,
+      "background": [
+        209,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 1784
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "offsetY": 0,
+      "background": [
+        209,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 3148
+    },
+    {
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "offsetY": 0,
+      "background": [
+        209,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 6836
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "offsetY": 1,
+      "background": [
+        209,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 7048
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "offsetY": 1,
+      "background": [
+        210,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 4565
+    },
+    {
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "offsetY": 1,
+      "background": [
+        209,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 2567
+    },
+    {
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "offsetY": 1,
+      "background": [
+        209,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 1874
+    }
+  ],
+  "alignment": {
+    "version": 1,
+    "method": "face-center-and-ground-anchor",
+    "target": {
+      "faceX": 211,
+      "groundY": 421
+    },
+    "offsets": [
+      {
+        "x": 8,
+        "y": 31
+      },
+      {
+        "x": 7,
+        "y": 31
+      },
+      {
+        "x": 9,
+        "y": 31
+      },
+      {
+        "x": 10,
+        "y": 31
+      },
+      {
+        "x": 8,
+        "y": 30
+      },
+      {
+        "x": 7,
+        "y": 30
+      },
+      {
+        "x": 9,
+        "y": 30
+      },
+      {
+        "x": 11,
+        "y": 30
+      }
+    ]
+  }
+}

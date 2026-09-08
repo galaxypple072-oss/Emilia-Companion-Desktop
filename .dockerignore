@@ -1,0 +1,12 @@
+.git
+.dsh
+.env
+.env.*
+!.env.example
+node_modules
+**/node_modules
+**/dist
+**/target
+data
+eval
+apps/desktop-pet/src/assets

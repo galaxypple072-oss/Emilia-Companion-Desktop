@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "defaultOutfit": "sleepwear",
+  "outfits": [
+    {
+      "id": "classic",
+      "source": "ac_base_emilia01",
+      "name": "经典服",
+      "shortName": "经典",
+      "model": "./assets/live2d/emilia/classic/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/classic/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 21
+    },
+    {
+      "id": "classic-alt",
+      "source": "ac_base_emilia02",
+      "name": "经典服·另一形态",
+      "shortName": "经典Ⅱ",
+      "model": "./assets/live2d/emilia/classic-alt/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/classic-alt/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 20
+    },
+    {
+      "id": "dress",
+      "source": "ac_base_emilia_dress01",
+      "name": "紫晶礼服",
+      "shortName": "礼服",
+      "model": "./assets/live2d/emilia/dress/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/dress/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 18
+    },
+    {
+      "id": "hood",
+      "source": "ac_base_emilia_hood01",
+      "name": "兜帽斗篷",
+      "shortName": "斗篷",
+      "model": "./assets/live2d/emilia/hood/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/hood/thumbnail.png",
+      "textureCount": 2,
+      "motionCount": 21
+    },
+    {
+      "id": "swimsuit",
+      "source": "ac_base_emilia_mizugi01",
+      "name": "夏日泳装",
+      "shortName": "泳装",
+      "model": "./assets/live2d/emilia/swimsuit/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/swimsuit/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 18
+    },
+    {
+      "id": "sleepwear",
+      "source": "ac_base_emilia_nemaki01",
+      "name": "粉色睡衣",
+      "shortName": "粉睡衣",
+      "model": "./assets/live2d/emilia/sleepwear/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/sleepwear/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 21
+    },
+    {
+      "id": "sleepwear-green",
+      "source": "ac_base_emilia_nemaki02",
+      "name": "薄荷睡衣",
+      "shortName": "薄荷",
+      "model": "./assets/live2d/emilia/sleepwear-green/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/sleepwear-green/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 21
+    },
+    {
+      "id": "sleepwear-robe",
+      "source": "ac_base_emilia_nemaki03",
+      "name": "紫色睡袍",
+      "shortName": "睡袍",
+      "model": "./assets/live2d/emilia/sleepwear-robe/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/sleepwear-robe/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 21
+    },
+    {
+      "id": "wedding",
+      "source": "ac_base_emilia_wedding01",
+      "name": "纯白婚纱",
+      "shortName": "婚纱",
+      "model": "./assets/live2d/emilia/wedding/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/wedding/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 21
+    },
+    {
+      "id": "christmas",
+      "source": "ac_base_emilia_xmas01",
+      "name": "圣诞礼装",
+      "shortName": "圣诞",
+      "model": "./assets/live2d/emilia/christmas/model.model3.json",
+      "thumbnail": "./assets/live2d/emilia/christmas/thumbnail.png",
+      "textureCount": 1,
+      "motionCount": 21
+    }
+  ]
+}

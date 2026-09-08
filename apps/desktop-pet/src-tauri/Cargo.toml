@@ -1,0 +1,24 @@
+[package]
+name = "personal-companion-desktop"
+version = "0.0.1"
+description = "Cross-platform desktop companion shell"
+authors = ["Personal Companion"]
+edition = "2021"
+
+[lib]
+name = "personal_companion_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+base64 = "0.22"
+keyring = "4.2.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-single-instance = "2"
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"

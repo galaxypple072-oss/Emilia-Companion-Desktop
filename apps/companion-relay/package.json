@@ -1,0 +1,9 @@
+{
+  "name": "@personal-companion/companion-relay",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "ws": "8.21.3"
+  }
+}

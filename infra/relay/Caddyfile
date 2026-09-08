@@ -1,0 +1,5 @@
+{$RELAY_DOMAIN} {
+  @relay path {$RELAY_PATH}
+  reverse_proxy @relay relay:8876
+  respond 404
+}

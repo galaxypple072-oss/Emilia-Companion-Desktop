@@ -1,0 +1,83 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import test from "node:test";
+
+test("desktop app declares separate pet, main, and device-agent windows", async () => {
+  const config = JSON.parse(await readFile(new URL("../src-tauri/tauri.conf.json", import.meta.url), "utf8"));
+  assert.deepEqual(config.app.windows.map(({ label }) => label), ["pet", "main", "agent"]);
+  const pet = config.app.windows.find(({ label }) => label === "pet");
+  const main = config.app.windows.find(({ label }) => label === "main");
+  const agent = config.app.windows.find(({ label }) => label === "agent");
+  assert.equal(pet.transparent, true);
+  assert.equal(pet.alwaysOnTop, true);
+  assert.equal(main.url, "main.html");
+  assert.equal(main.transparent, false);
+  assert.equal(main.visible, false);
+  assert.equal(agent.url, "agent.html");
+  assert.equal(agent.visible, false);
+  const capability = JSON.parse(await readFile(new URL("../src-tauri/capabilities/default.json", import.meta.url), "utf8"));
+  assert.ok(capability.windows.includes("agent"));
+});
+
+test("main window exposes every planned control-center section", async () => {
+  const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
+  for (const page of ["chat", "tasks", "files", "devices", "core", "memory", "proactive", "appearance", "settings"]) {
+    assert.match(html, new RegExp(`data-page-panel=["']${page}["']`));
+  }
+  assert.match(html, /data-page=["']core["']/);
+});
+
+test("pet and main window use acknowledged chat events", async () => {
+  const pet = await readFile(new URL("../src/pet.js", import.meta.url), "utf8");
+  const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
+  assert.match(pet, /companion:main-chat-send-result/);
+  assert.match(main, /pendingChatRequest/);
+  assert.match(main, /companion:main-request-snapshot/);
+  assert.match(main, /function clearPendingChat/);
+  assert.match(main, /消息仍未确认；连接可能正在恢复/);
+});
+
+test("task center uses structured encrypted transport events", async () => {
+  const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
+  const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
+  const agent = await readFile(new URL("../src/agent.js", import.meta.url), "utf8");
+  assert.match(html, /id=["']task-list["']/);
+  assert.match(main, /companion:transport-task-command/);
+  assert.match(main, /companion:task-result/);
+  assert.match(agent, /sendTaskCommand/);
+});
+
+test("the hidden device agent owns the only persistent Core transport", async () => {
+  const pet = await readFile(new URL("../src/pet.js", import.meta.url), "utf8");
+  const agent = await readFile(new URL("../src/agent.js", import.meta.url), "utf8");
+  assert.doesNotMatch(pet, /new CompanionConnectionClient/);
+  assert.match(agent, /new CompanionConnectionClient/);
+  assert.match(agent, /clientId: deviceId/);
+  assert.doesNotMatch(agent, /clientId: `\$\{deviceId\}-control`/);
+  assert.match(pet, /companion:transport-chat-send/);
+  assert.match(agent, /companion:transport-chat-send/);
+  assert.match(agent, /companion:agent-state-request/);
+});
+
+test("a closed main window can be recreated without keeping the app alive", async () => {
+  const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
+  assert.match(rust, /WebviewWindowBuilder::new\(&app, "main"/);
+  assert.doesNotMatch(rust, /api\.prevent_close\(\)/);
+});
+
+test("file center supports navigation, search, preview, reveal, and Core handoff", async () => {
+  const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
+  const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
+  const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
+  for (const id of ["file-search-form", "file-breadcrumbs", "file-entry-list", "file-preview-body", "file-reveal-button", "file-ask-button", "file-send-qq-button", "file-send-status"]) {
+    assert.match(html, new RegExp(`id=["']${id}["']`));
+  }
+  assert.match(main, /device_list_directory/);
+  assert.match(main, /device_search_files/);
+  assert.match(main, /device_read_text_file/);
+  assert.match(main, /device_read_image_preview/);
+  assert.match(main, /sendMainChat/);
+  assert.match(main, /companion:main-file-send/);
+  assert.match(rust, /fn device_reveal_path/);
+  assert.match(rust, /fn device_read_binary_file/);
+});

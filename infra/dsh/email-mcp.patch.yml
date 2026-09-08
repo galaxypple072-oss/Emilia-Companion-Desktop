@@ -1,0 +1,52 @@
+- insert:
+    - id: mcp-companion-email
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: companion_email
+        transport: stdio
+        command: node
+        args: [--experimental-strip-types, apps/email-mcp/src/server.ts]
+        cwd: !!js process.cwd()
+        toolCallTimeoutMs: 45000
+        failOnStartupError: true
+    - id: mcp-companion-files
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: companion_files
+        transport: stdio
+        command: node
+        args: [--experimental-strip-types, apps/file-mcp/src/server.ts]
+        cwd: !!js process.cwd()
+        env:
+          COMPANION_FILE_ROOTS: 'D:\work;D:\study;D:\learning;D:\pictures;D:\travel'
+        toolCallTimeoutMs: 45000
+        failOnStartupError: true
+    - id: mcp-companion-devices
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: companion_devices
+        transport: stdio
+        command: node
+        args: [--experimental-strip-types, apps/device-mcp/src/server.ts]
+        cwd: !!js process.cwd()
+        toolCallTimeoutMs: 30000
+        failOnStartupError: true
+
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: tool-str-replace-editor
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-subagent-control
+  disabled: true

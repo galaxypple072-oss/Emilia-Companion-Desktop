@@ -1,0 +1,107 @@
+{
+  "Version": 3,
+  "FileReferences": {
+    "Moc": "model.moc3",
+    "Textures": [
+      "textures/texture_00.png"
+    ],
+    "Motions": {
+      "Idle": [
+        {
+          "File": "motions/idle-0.motion3.json"
+        },
+        {
+          "File": "motions/idle-1.motion3.json"
+        },
+        {
+          "File": "motions/idle-2.motion3.json"
+        },
+        {
+          "File": "motions/idle-3.motion3.json"
+        }
+      ],
+      "Smile": [
+        {
+          "File": "motions/smile-0.motion3.json"
+        },
+        {
+          "File": "motions/smile-1.motion3.json"
+        },
+        {
+          "File": "motions/smile-2.motion3.json"
+        }
+      ],
+      "Surprise": [
+        {
+          "File": "motions/surprise-0.motion3.json"
+        },
+        {
+          "File": "motions/surprise-1.motion3.json"
+        },
+        {
+          "File": "motions/surprise-2.motion3.json"
+        }
+      ],
+      "Think": [
+        {
+          "File": "motions/think-0.motion3.json"
+        },
+        {
+          "File": "motions/think-1.motion3.json"
+        }
+      ],
+      "Angry": [
+        {
+          "File": "motions/angry-0.motion3.json"
+        },
+        {
+          "File": "motions/angry-1.motion3.json"
+        }
+      ],
+      "Nod": [
+        {
+          "File": "motions/nod-0.motion3.json"
+        },
+        {
+          "File": "motions/nod-1.motion3.json"
+        }
+      ],
+      "Shy": [
+        {
+          "File": "motions/shy-0.motion3.json"
+        },
+        {
+          "File": "motions/shy-1.motion3.json"
+        }
+      ],
+      "Talk": [
+        {
+          "File": "motions/talk-0.motion3.json"
+        },
+        {
+          "File": "motions/talk-1.motion3.json"
+        },
+        {
+          "File": "motions/talk-2.motion3.json"
+        }
+      ]
+    }
+  },
+  "Groups": [
+    {
+      "Target": "Parameter",
+      "Name": "EyeBlink",
+      "Ids": [
+        "ParamEyeLOpen",
+        "ParamEyeROpen"
+      ]
+    },
+    {
+      "Target": "Parameter",
+      "Name": "LipSync",
+      "Ids": [
+        "ParamMouthOpenY"
+      ]
+    }
+  ]
+}

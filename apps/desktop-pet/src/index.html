@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Emilia</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <section id="chat-panel" class="chat-panel" aria-label="与艾米莉亚对话" aria-hidden="true">
+      <header class="chat-header">
+        <div>
+          <strong>艾米莉亚</strong>
+          <span id="connection-status" class="connection-status" data-state="offline">离线</span>
+        </div>
+        <div class="chat-header-actions">
+          <button id="settings-toggle" class="icon-button" type="button" aria-label="连接设置">⚙</button>
+          <button id="chat-close" class="icon-button" type="button" aria-label="关闭聊天记录">×</button>
+        </div>
+      </header>
+      <form id="connection-form" class="connection-form collapsed" autocomplete="off" novalidate>
+        <header class="connection-form-header">
+          <div>
+            <span class="connection-eyebrow">设备连接</span>
+            <strong>连接到 Emilia Core</strong>
+          </div>
+          <button id="settings-close" class="icon-button" type="button" aria-label="关闭连接设置">×</button>
+        </header>
+        <p class="connection-intro">从 Windows 的 Emilia Core 复制完整连接码，在这里粘贴一次即可。</p>
+        <label class="connection-field quick-pair-field">
+          <span>完整连接码</span>
+          <input id="connection-code" name="connectionCode" type="password" spellcheck="false" placeholder="粘贴 emilia-connect1…" />
+          <small>它包含加密连接所需的信息，只会保存到系统钥匙串</small>
+        </label>
+        <button id="connection-quick-connect" class="primary-button quick-pair-button" type="button">一键连接</button>
+        <output id="connection-check" class="connection-check" data-state="idle" aria-live="polite">
+          <span class="connection-check-icon" aria-hidden="true"></span>
+          <span><strong>等待连接</strong><small>粘贴连接码后会自动验证 Core</small></span>
+        </output>
+        <details class="connection-manual">
+          <summary>手动连接与诊断</summary>
+          <div class="connection-manual-fields">
+            <fieldset id="connection-mode" class="connection-mode">
+              <legend>连接方式</legend>
+              <label><input type="radio" name="mode" value="relay" checked /><span>私密中继<small>推荐 · 无需固定 IP</small></span></label>
+              <label><input type="radio" name="mode" value="direct" /><span>局域网直连<small>备用 · 同一网络</small></span></label>
+            </fieldset>
+            <label class="connection-field">
+              <span id="connection-url-label">中继地址</span>
+              <input id="bridge-url" name="url" type="text" inputmode="url" spellcheck="false" placeholder="例如 relay.example.com" required />
+              <small id="connection-url-help">两端都主动连接它，不受校园网 IP 变化影响</small>
+            </label>
+            <label class="connection-field">
+              <span id="connection-token-label">配对码</span>
+              <span class="secret-input">
+                <input id="bridge-token" name="token" type="password" spellcheck="false" placeholder="粘贴 Core 生成的配对码" required />
+                <button id="token-visibility" type="button" aria-label="显示 Token" aria-pressed="false">显示</button>
+              </span>
+            </label>
+            <label class="connection-field compact"><span>设备名称</span><input id="client-name" name="name" type="text" maxlength="30" required /></label>
+            <div class="connection-actions">
+              <button id="connection-test" class="secondary-button" type="button">测试连接</button>
+              <button id="connection-save" class="primary-button" type="submit" disabled>保存并连接</button>
+            </div>
+          </div>
+        </details>
+        <details class="device-permissions">
+          <summary>本机设备能力</summary>
+          <p>只有你在这里允许的能力，Core 才能调用。不会开放任意命令执行。</p>
+          <div class="device-file-roots">
+            <span><strong>允许访问的文件夹</strong><small id="device-file-roots-summary">尚未选择</small></span>
+            <button id="device-file-roots-choose" type="button">选择…</button>
+          </div>
+          <div class="device-file-roots">
+            <span><strong>macOS 屏幕录制权限</strong><small id="device-screen-permission-summary">正在检查…</small></span>
+            <button id="device-screen-permission-request" type="button">申请权限</button>
+          </div>
+          <div id="device-permission-list" class="device-permission-list"></div>
+          <div class="device-audit">
+            <strong>最近设备操作</strong>
+            <output id="device-audit-list">暂无操作</output>
+          </div>
+        </details>
+        <small id="connection-privacy" class="connection-privacy">配对密钥只保存在两端，中继无法解密聊天内容</small>
+      </form>
+      <div id="chat-messages" class="chat-messages" aria-live="polite"></div>
+      <div id="typing-indicator" class="typing-indicator" hidden>正在想…</div>
+      <form id="chat-form" class="chat-form">
+        <textarea id="chat-input" rows="1" maxlength="4000" placeholder="和她说点什么…" aria-label="消息"></textarea>
+        <button type="submit" aria-label="发送">发送</button>
+      </form>
+    </section>
+    <section id="wardrobe-panel" class="wardrobe-panel" aria-label="艾米莉亚衣柜" aria-hidden="true">
+      <header class="wardrobe-header">
+        <div><span>Emilia wardrobe</span><strong>今天穿哪一套？</strong></div>
+        <button id="wardrobe-close" class="icon-button" type="button" aria-label="关闭衣柜">×</button>
+      </header>
+      <div id="wardrobe-options" class="wardrobe-options" role="listbox" aria-label="服装列表"></div>
+      <output id="wardrobe-status" class="wardrobe-status" aria-live="polite"></output>
+    </section>
+    <main id="pet-stage" class="pet-stage" data-tauri-drag-region aria-label="艾米莉亚桌宠">
+      <output id="speech-bubble" class="speech-bubble" aria-live="polite">我在</output>
+      <canvas id="live2d-canvas" class="live2d-canvas" width="600" height="720" aria-label="艾米莉亚 Live2D"></canvas>
+      <img id="pet-sprite" class="pet-sprite" alt="艾米莉亚" draggable="false" />
+      <section class="quick-chat-shell" aria-label="快捷对话">
+        <output id="quick-last-message" class="quick-last-message" hidden></output>
+        <form id="quick-chat-form" class="quick-chat-form">
+          <input id="quick-chat-input" type="text" maxlength="4000" placeholder="和我说句话…" aria-label="快捷消息" />
+          <button type="submit" aria-label="发送快捷消息">↑</button>
+        </form>
+      </section>
+      <nav class="pet-controls" aria-label="情绪动作预览">
+        <button id="chat-toggle" type="button" aria-label="打开对话">聊</button>
+        <button id="wardrobe-toggle" type="button" aria-label="打开衣柜">衣</button>
+        <button type="button" data-motion="Idle" aria-label="待机">•</button>
+        <button type="button" data-motion="Smile" aria-label="开心">☺</button>
+        <button type="button" data-motion="Think" aria-label="思考">…</button>
+        <button type="button" data-motion="Surprise" aria-label="惊讶">!</button>
+        <button type="button" data-motion="Shy" aria-label="害羞">♡</button>
+      </nav>
+      <span id="state-label" class="state-label">idle</span>
+    </main>
+    <aside id="framing-panel" class="framing-panel" aria-label="Live2D 构图校准">
+      <h1>Emilia 构图</h1>
+      <label>比例 <output data-value="scale"></output><input data-framing="scale" type="range" min="0.6" max="2.2" step="0.01" /></label>
+      <label>水平 <output data-value="x"></output><input data-framing="x" type="range" min="-160" max="160" step="1" /></label>
+      <label>垂直 <output data-value="y"></output><input data-framing="y" type="range" min="-220" max="220" step="1" /></label>
+      <div class="framing-actions">
+        <button type="button" data-view="half">半身预设</button>
+        <button type="button" data-view="full">全身预设</button>
+      </div>
+      <p>仅在地址带 <code>?calibrate=1</code> 时显示</p>
+    </aside>
+    <script type="module" src="./pet.js"></script>
+  </body>
+</html>

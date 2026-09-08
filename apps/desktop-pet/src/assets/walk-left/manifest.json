@@ -1,0 +1,156 @@
+{
+  "source": "emilia-walk-left-direct-v1.png",
+  "columns": 4,
+  "rows": 2,
+  "frameCount": 8,
+  "frameWidth": 422,
+  "frameHeight": 453,
+  "delayMs": 120,
+  "rowOffsetsY": [
+    0,
+    5
+  ],
+  "loop": true,
+  "alpha": "unassociated RGBA",
+  "resized": false,
+  "frames": [
+    {
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "offsetY": 0,
+      "background": [
+        194,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 2049
+    },
+    {
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "offsetY": 0,
+      "background": [
+        195,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2019
+    },
+    {
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "offsetY": 0,
+      "background": [
+        195,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2024
+    },
+    {
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "offsetY": 0,
+      "background": [
+        195,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2098
+    },
+    {
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "offsetY": 5,
+      "background": [
+        194,
+        1,
+        1
+      ],
+      "partialAlphaPixels": 2022
+    },
+    {
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "offsetY": 5,
+      "background": [
+        196,
+        2,
+        2
+      ],
+      "partialAlphaPixels": 2000
+    },
+    {
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "offsetY": 5,
+      "background": [
+        196,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 1993
+    },
+    {
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "offsetY": 5,
+      "background": [
+        196,
+        2,
+        1
+      ],
+      "partialAlphaPixels": 2007
+    }
+  ],
+  "alignment": {
+    "version": 1,
+    "method": "face-center-and-ground-anchor",
+    "target": {
+      "faceX": 211,
+      "groundY": 421
+    },
+    "offsets": [
+      {
+        "x": 49,
+        "y": 30
+      },
+      {
+        "x": 54,
+        "y": 27
+      },
+      {
+        "x": 56,
+        "y": 25
+      },
+      {
+        "x": 57,
+        "y": 29
+      },
+      {
+        "x": 53,
+        "y": 29
+      },
+      {
+        "x": 54,
+        "y": 28
+      },
+      {
+        "x": 57,
+        "y": 29
+      },
+      {
+        "x": 58,
+        "y": 29
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+services:
+  relay:
+    build:
+      context: ../..
+      dockerfile: infra/relay/Dockerfile
+    restart: unless-stopped
+    expose:
+      - "8876"
+    networks:
+      - relay-internal
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - relay
+    environment:
+      RELAY_DOMAIN: ${RELAY_DOMAIN:?Set RELAY_DOMAIN in infra/relay/.env}
+      RELAY_PATH: ${RELAY_PATH:?Set RELAY_PATH in infra/relay/.env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - relay-internal
+
+networks:
+  relay-internal:
+
+volumes:
+  caddy-data:
+  caddy-config:

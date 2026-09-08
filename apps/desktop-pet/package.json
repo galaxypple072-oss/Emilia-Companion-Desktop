@@ -1,0 +1,20 @@
+{
+  "name": "@personal-companion/desktop-pet",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "test": "node --test test/*.test.js",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "live2d-renderer": "0.6.6",
+    "path-browserify": "1.0.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4",
+    "vite": "8.2.2"
+  }
+}
