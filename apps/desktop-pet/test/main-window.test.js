@@ -27,6 +27,20 @@ test("main window exposes every planned control-center section", async () => {
   assert.match(html, /data-page=["']core["']/);
 });
 
+test("Core page manages paired devices without exposing pairing secrets", async () => {
+  const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
+  const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
+  const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
+  for (const id of ["core-paired-devices-list", "core-paired-devices-refresh", "core-paired-devices-result"]) {
+    assert.match(html, new RegExp(`id=["']${id}["']`));
+  }
+  assert.match(main, /core_list_paired_devices/);
+  assert.match(main, /core_revoke_paired_device/);
+  assert.match(main, /撤销访问/);
+  assert.match(rust, /fn core_list_paired_devices/);
+  assert.match(rust, /fn core_revoke_paired_device/);
+});
+
 test("pet and main window use acknowledged chat events", async () => {
   const pet = await readFile(new URL("../src/pet.js", import.meta.url), "utf8");
   const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");

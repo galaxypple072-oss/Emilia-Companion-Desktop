@@ -40,6 +40,7 @@ function navigate(page) {
     void refreshCoreLog();
     void refreshVoiceService();
     void refreshVoiceLog();
+    void refreshPairedDevices();
   }
 }
 
@@ -205,6 +206,86 @@ function escapeHtml(value) {
 
 let coreServiceBusy = false;
 let coreLanConnectionCode = "";
+let pairedDevicesBusy = false;
+
+function formatPairedDeviceTime(value) {
+  const date = new Date(Number(value));
+  if (!Number.isFinite(date.getTime())) return "时间未知";
+  return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
+
+function renderPairedDevices(devices = []) {
+  const list = $("#core-paired-devices-list");
+  list.replaceChildren();
+  if (!devices.length) {
+    const empty = document.createElement("p");
+    empty.className = "paired-device-empty";
+    empty.textContent = "还没有已配对设备";
+    list.append(empty);
+    return;
+  }
+  for (const device of devices) {
+    const row = document.createElement("div");
+    row.className = "paired-device-row";
+    const copy = document.createElement("div");
+    copy.className = "paired-device-copy";
+    const name = document.createElement("strong");
+    name.textContent = String(device.name || "未命名设备");
+    const detail = document.createElement("small");
+    detail.textContent = `最近连接：${formatPairedDeviceTime(device.lastSeenAt)} · 首次配对：${formatPairedDeviceTime(device.createdAt)}`;
+    copy.append(name, detail);
+    const revoke = document.createElement("button");
+    revoke.type = "button";
+    revoke.className = "secondary-action paired-device-revoke";
+    revoke.textContent = "撤销访问";
+    revoke.addEventListener("click", () => { void revokePairedDevice(device); });
+    row.append(copy, revoke);
+    list.append(row);
+  }
+}
+
+async function refreshPairedDevices() {
+  if (pairedDevicesBusy) return;
+  const refresh = $("#core-paired-devices-refresh");
+  const result = $("#core-paired-devices-result");
+  pairedDevicesBusy = true;
+  refresh.disabled = true;
+  try {
+    const response = await invoke("core_list_paired_devices");
+    const devices = Array.isArray(response) ? response : [];
+    renderPairedDevices(devices);
+    result.dataset.state = "idle";
+    result.textContent = devices.length ? `共 ${devices.length} 台已配对设备。撤销会在其下次连接时生效。` : "还没有设备兑换过连接码。";
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally {
+    pairedDevicesBusy = false;
+    refresh.disabled = false;
+  }
+}
+
+async function revokePairedDevice(device) {
+  if (pairedDevicesBusy) return;
+  const name = String(device?.name || "这台设备");
+  if (!window.confirm(`确定撤销“${name}”的 Core 访问权限吗？它之后需要重新使用新的连接码配对。`)) return;
+  const result = $("#core-paired-devices-result");
+  pairedDevicesBusy = true;
+  result.dataset.state = "idle";
+  result.textContent = `正在撤销“${name}”的访问权限…`;
+  try {
+    await invoke("core_revoke_paired_device", { id: String(device.id || "") });
+    result.dataset.state = "success";
+    result.textContent = `已撤销“${name}”的访问权限。`;
+    pairedDevicesBusy = false;
+    await refreshPairedDevices();
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally {
+    pairedDevicesBusy = false;
+  }
+}
 
 async function createCoreLanConnectionCode() {
   const create = $("#core-lan-code-create");
@@ -227,6 +308,7 @@ async function createCoreLanConnectionCode() {
 }
 
 $("#core-lan-code-create").addEventListener("click", () => { void createCoreLanConnectionCode(); });
+$("#core-paired-devices-refresh").addEventListener("click", () => { void refreshPairedDevices(); });
 $("#core-lan-code-copy").addEventListener("click", async () => {
   const result = $("#core-lan-code-result");
   try {

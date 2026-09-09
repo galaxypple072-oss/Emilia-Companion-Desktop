@@ -170,6 +170,13 @@ button { color: inherit; }
 .voice-model-detail strong { color: #5b4767; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .service-actions { display: flex; gap: 7px; margin-top: 12px; }
 .service-actions button:last-child { margin-left: auto; }
+.paired-device-list { display: grid; gap: 7px; margin-top: 12px; }
+.paired-device-empty { margin: 0; padding: 12px; border: 1px dashed #ded3e4; border-radius: 10px; color: #94869c; font-size: 10px; text-align: center; }
+.paired-device-row { display: flex; align-items: center; gap: 12px; padding: 10px 11px; border: 1px solid #e4dbe8; border-radius: 10px; background: rgba(250,248,251,.76); }
+.paired-device-copy { min-width: 0; flex: 1; display: grid; gap: 3px; }
+.paired-device-copy strong { overflow: hidden; color: #554060; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.paired-device-copy small { color: #998da0; font-size: 9px; }
+.paired-device-revoke { flex: none; color: #9b5263; }
 .core-log-output { min-height: 150px; max-height: 230px; margin: 0; padding: 14px; overflow: auto; border: 1px solid #ddd3e4; color: #514659; background: #f7f4f8; font: 9px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
 
 @media (max-width: 1040px) {

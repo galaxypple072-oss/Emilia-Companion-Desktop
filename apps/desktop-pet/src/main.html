@@ -155,6 +155,11 @@
               <div class="service-actions"><button type="button" id="core-lan-code-create" class="primary-action">生成连接码</button><button type="button" id="core-lan-code-copy" class="secondary-action" disabled>复制</button></div>
               <output id="core-lan-code-result" class="inline-result" data-state="idle">连接码仅在 10 分钟内有效，且只能兑换一次；不要发给陌生人。</output>
             </article>
+            <article class="content-card core-service-card">
+              <div class="section-heading"><div><h2>已配对设备</h2><p>设备首次兑换连接码后会出现在这里；撤销后该设备必须重新配对</p></div><button type="button" id="core-paired-devices-refresh" class="secondary-action">刷新</button></div>
+              <div id="core-paired-devices-list" class="paired-device-list" aria-live="polite"><p class="paired-device-empty">正在读取已配对设备…</p></div>
+              <output id="core-paired-devices-result" class="inline-result" data-state="idle">这里只显示设备名称和连接时间，不显示连接密钥。</output>
+            </article>
             <article class="content-card core-service-card voice-service-card">
               <div class="section-heading"><div><h2>艾米莉亚语音</h2><p id="voice-service-detail">检查本机 GPT-SoVITS 与语音桥接服务</p></div><span id="voice-service-badge" class="service-badge" data-state="checking">检查中</span></div>
               <div class="service-metrics">

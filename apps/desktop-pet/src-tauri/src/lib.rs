@@ -1,5 +1,5 @@
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine as _};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -71,6 +71,15 @@ struct CoreServiceStatus {
     detail: String,
 }
 
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct PairedDevice {
+    id: String,
+    name: String,
+    created_at: u64,
+    last_seen_at: u64,
+}
+
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 struct VoiceServiceStatus {
@@ -116,6 +125,14 @@ fn write_app_log(level: &str, message: &str) {
     let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
     let sanitized = message.replace(['\r', '\n'], " ");
     let _ = writeln!(file, "[{now}] [{level}] {}", sanitized.chars().take(4000).collect::<String>());
+}
+
+fn is_uuid(value: &str) -> bool {
+    value.len() == 36
+        && value.chars().enumerate().all(|(index, character)| {
+            matches!(index, 8 | 13 | 18 | 23) && character == '-'
+                || !matches!(index, 8 | 13 | 18 | 23) && character.is_ascii_hexdigit()
+        })
 }
 
 #[tauri::command]
@@ -509,6 +526,52 @@ $address"#)?;
     }
     #[cfg(not(target_os = "windows"))]
     Err("只有托管 Core 的 Windows 设备能生成局域网连接码".to_string())
+}
+
+fn run_core_pairing_cli(arguments: &[&str]) -> Result<serde_json::Value, String> {
+    #[cfg(target_os = "windows")]
+    {
+        if !core_service_status()?.control_listening {
+            return Err("Core 尚未就绪，无法读取设备配对信息".to_string());
+        }
+        let node = PathBuf::from(r"C:\Program Files\nodejs\node.exe");
+        let cli = PathBuf::from(r"C:\Users\zhyje\personal-companion\apps\product-core\src\cli.ts");
+        if !node.is_file() || !cli.is_file() { return Err("Core 配对管理工具不可用".to_string()); }
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        let output = Command::new(node)
+            .arg("--experimental-strip-types")
+            .arg(cli)
+            .args(arguments)
+            .current_dir(r"C:\Users\zhyje\personal-companion")
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+            .map_err(|error| format!("无法读取 Core 配对信息：{error}"))?;
+        if !output.status.success() {
+            return Err(redact_voice_detail(String::from_utf8_lossy(&output.stderr).into_owned()));
+        }
+        return serde_json::from_slice(&output.stdout).map_err(|_| "Core 返回的设备信息格式异常".to_string());
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = arguments;
+        Err("设备管理请在托管 Core 的 Windows 设备上操作".to_string())
+    }
+}
+
+#[tauri::command]
+fn core_list_paired_devices() -> Result<Vec<PairedDevice>, String> {
+    let payload = run_core_pairing_cli(&["paired-devices"])?;
+    serde_json::from_value(payload["devices"].clone()).map_err(|_| "Core 返回的已配对设备格式异常".to_string())
+}
+
+#[tauri::command]
+fn core_revoke_paired_device(id: String) -> Result<(), String> {
+    let id = id.trim();
+    if !is_uuid(id) { return Err("设备标识格式异常".to_string()); }
+    let _ = run_core_pairing_cli(&["revoke-device", "--id", id])?;
+    write_app_log("pairing", "revoked a paired device");
+    Ok(())
 }
 
 #[tauri::command]
@@ -1083,6 +1146,8 @@ pub fn run() {
             core_service_status,
             core_service_control,
             core_create_lan_connection_code,
+            core_list_paired_devices,
+            core_revoke_paired_device,
             core_read_log,
             voice_service_status,
             voice_service_control,
