@@ -29,6 +29,7 @@ import { FallbackVoiceSynthesizer, VoiceClient, loadVoiceClientConfig } from "./
 import { RuntimeNodeRegistry } from "./runtime-node-registry.ts";
 import { OneBotClient } from "../../qq-gateway/src/onebot-client.ts";
 import { SplitQqClient } from "./qq-client.ts";
+import { createConnectionCode } from "../../../packages/companion-relay-protocol/src/index.js";
 
 function option(args: string[], name: string): string | undefined {
   const index = args.indexOf(name);
@@ -80,6 +81,7 @@ function usage(): string {
   npm run core:init
   npm run core:run
   npm run core:status
+  npm run core:connection-code -- --url <ws://LAN-IP:8765>
   npm run core:send -- --text <message>
   npm run core:remind -- --in <30s|10m|2h|1d> --text <message>
   npm run core:remind -- --at <ISO-8601> --text <message>
@@ -162,6 +164,18 @@ async function main(): Promise<void> {
         },
         ...store.summary(),
       }, null, 2));
+      return;
+    }
+    if (command === "connection-code") {
+      const bridge = loadCompanionBridgeConfig();
+      if (!bridge) throw new Error("Companion Bridge is not enabled on this Core");
+      const url = option(args, "--url");
+      if (!url) throw new Error("connection-code requires --url <ws://LAN-IP:8765>");
+      console.log(JSON.stringify({
+        mode: "direct",
+        server_name: bridge.serverName,
+        code: createConnectionCode({ mode: "direct", url, token: bridge.token }),
+      }));
       return;
     }
     if (command === "inbox") {

@@ -204,6 +204,40 @@ function escapeHtml(value) {
 }
 
 let coreServiceBusy = false;
+let coreLanConnectionCode = "";
+
+async function createCoreLanConnectionCode() {
+  const create = $("#core-lan-code-create");
+  const copy = $("#core-lan-code-copy");
+  const result = $("#core-lan-code-result");
+  create.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = "正在生成局域网连接码…";
+  try {
+    coreLanConnectionCode = await invoke("core_create_lan_connection_code");
+    copy.disabled = false;
+    result.dataset.state = "success";
+    result.textContent = "已生成。复制后到另一台 Emilia Companion 的连接设置中粘贴。";
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally {
+    create.disabled = false;
+  }
+}
+
+$("#core-lan-code-create").addEventListener("click", () => { void createCoreLanConnectionCode(); });
+$("#core-lan-code-copy").addEventListener("click", async () => {
+  const result = $("#core-lan-code-result");
+  try {
+    await navigator.clipboard.writeText(coreLanConnectionCode);
+    result.dataset.state = "success";
+    result.textContent = "连接码已复制。它只适用于当前局域网，请不要发给陌生人。";
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = "无法访问剪贴板，请重新生成后手动复制。";
+  }
+});
 let voiceServiceBusy = false;
 
 let pendingTaskRequest = "";

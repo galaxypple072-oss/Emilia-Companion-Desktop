@@ -31,12 +31,25 @@ test("connection code carries one validated relay profile", () => {
   });
 });
 
+test("connection code carries one opaque LAN direct profile", () => {
+  const token = "0123456789abcdefghijklmnopqrstuv";
+  const code = createConnectionCode({ mode: "direct", url: "10.89.196.224", token });
+  assert.equal(code.includes("10.89.196.224"), false);
+  assert.equal(code.includes(token), false);
+  assert.deepEqual(parseConnectionCode(code), {
+    mode: "direct",
+    url: "ws://10.89.196.224:8765/",
+    token,
+  });
+});
+
 test("connection code rejects malformed transport details", () => {
   assert.throws(() => parseConnectionCode("emilia-connect1.not-base64"), /invalid/u);
   assert.throws(() => createConnectionCode({
     url: "https://relay.example.test",
     pairingCode: createPairingCode(),
   }), /ws:\/\//u);
+  assert.throws(() => createConnectionCode({ mode: "direct", url: "http://core.example.test", token: "0123456789abcdefghijklmnopqrstuv" }), /ws:\/\//u);
 });
 
 test("relay payload is opaque and authenticated end to end", async () => {

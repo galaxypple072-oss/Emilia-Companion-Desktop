@@ -472,6 +472,46 @@ fn core_service_control(action: String) -> Result<CoreServiceStatus, String> {
 }
 
 #[tauri::command]
+fn core_create_lan_connection_code() -> Result<String, String> {
+    #[cfg(target_os = "windows")]
+    {
+        if !core_service_status()?.bridge_listening {
+            return Err("Core 尚未启动，无法创建连接码".to_string());
+        }
+        let ip = powershell_output(r#"$route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction SilentlyContinue | Sort-Object RouteMetric | Select-Object -First 1
+if ($null -eq $route) { throw 'No default network route was found' }
+$address = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $route.InterfaceIndex -ErrorAction SilentlyContinue |
+  Where-Object { $_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*' } |
+  Select-Object -First 1 -ExpandProperty IPAddress
+if (-not $address) { throw 'No LAN IPv4 address was found' }
+$address"#)?;
+        let ip = ip.trim();
+        let node = PathBuf::from(r"C:\Program Files\nodejs\node.exe");
+        let cli = PathBuf::from(r"C:\Users\zhyje\personal-companion\apps\product-core\src\cli.ts");
+        if !node.is_file() || !cli.is_file() { return Err("Core connection-code tool is unavailable".to_string()); }
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        let output = Command::new(node)
+            .args(["--experimental-strip-types", cli.to_string_lossy().as_ref(), "connection-code", "--url", &format!("ws://{ip}:8765")])
+            .current_dir(r"C:\Users\zhyje\personal-companion")
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+            .map_err(|error| format!("无法生成连接码：{error}"))?;
+        if !output.status.success() {
+            return Err(redact_voice_detail(String::from_utf8_lossy(&output.stderr).into_owned()));
+        }
+        let payload: serde_json::Value = serde_json::from_slice(&output.stdout)
+            .map_err(|_| "Core 返回的连接码格式异常".to_string())?;
+        let code = payload["code"].as_str().unwrap_or("").trim();
+        if code.is_empty() { return Err("Core 没有生成连接码".to_string()); }
+        write_app_log("connection", "generated a LAN connection code");
+        return Ok(code.to_string());
+    }
+    #[cfg(not(target_os = "windows"))]
+    Err("只有托管 Core 的 Windows 设备能生成局域网连接码".to_string())
+}
+
+#[tauri::command]
 fn core_read_log(max_lines: usize) -> Result<String, String> {
     #[cfg(not(target_os = "windows"))]
     let _ = max_lines;
@@ -1042,6 +1082,7 @@ pub fn run() {
             frontend_report_error,
             core_service_status,
             core_service_control,
+            core_create_lan_connection_code,
             core_read_log,
             voice_service_status,
             voice_service_control,

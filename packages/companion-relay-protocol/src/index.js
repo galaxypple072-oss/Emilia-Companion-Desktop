@@ -102,14 +102,37 @@ function normalizeConnectionRelayUrl(value) {
   return url.toString();
 }
 
-export function createConnectionCode({ url, pairingCode }) {
-  const payload = {
-    version: 1,
-    mode: "relay",
-    url: normalizeConnectionRelayUrl(url),
-    pairingCode: String(pairingCode ?? "").trim(),
-  };
-  parsePairingCode(payload.pairingCode);
+function normalizeConnectionDirectUrl(value) {
+  let raw = String(value ?? "").trim();
+  if (!raw) throw new Error("Core URL is required");
+  if (!/^[a-z][a-z\d+.-]*:\/\//iu.test(raw)) raw = `ws://${raw}`;
+  const url = new URL(raw);
+  if (!['ws:', 'wss:'].includes(url.protocol)) throw new Error("Core URL must use ws:// or wss://");
+  if (url.username || url.password) throw new Error("Core URL cannot contain credentials");
+  if (!url.hostname) throw new Error("Core URL must contain a host");
+  if (!url.port) url.port = "8765";
+  url.pathname = "/";
+  url.search = "";
+  url.hash = "";
+  return url.toString();
+}
+
+function cleanDirectToken(value) {
+  const token = String(value ?? "").trim();
+  if (token.length < 24 || token.length > 512) throw new Error("Core access token is invalid");
+  return token;
+}
+
+/**
+ * Creates an opaque, pasteable profile for either a user's own relay or a
+ * same-LAN Core. The code deliberately encodes its contents so neither an IP
+ * nor credential is exposed in a screenshot at a glance.
+ */
+export function createConnectionCode({ mode = "relay", url, pairingCode, token }) {
+  const payload = mode === "direct"
+    ? { version: 1, mode: "direct", url: normalizeConnectionDirectUrl(url), token: cleanDirectToken(token) }
+    : { version: 1, mode: "relay", url: normalizeConnectionRelayUrl(url), pairingCode: String(pairingCode ?? "").trim() };
+  if (payload.mode === "relay") parsePairingCode(payload.pairingCode);
   return `${CONNECTION_PREFIX}.${base64UrlEncode(encoder.encode(JSON.stringify(payload)))}`;
 }
 
@@ -123,10 +146,16 @@ export function parseConnectionCode(value) {
   } catch {
     throw new Error("Connection code is invalid");
   }
-  if (payload?.version !== 1 || payload?.mode !== "relay") throw new Error("Connection code is unsupported");
-  const pairingCode = String(payload.pairingCode ?? "").trim();
-  parsePairingCode(pairingCode);
-  return Object.freeze({ mode: "relay", url: normalizeConnectionRelayUrl(payload.url), pairingCode });
+  if (payload?.version !== 1) throw new Error("Connection code is unsupported");
+  if (payload.mode === "relay") {
+    const pairingCode = String(payload.pairingCode ?? "").trim();
+    parsePairingCode(pairingCode);
+    return Object.freeze({ mode: "relay", url: normalizeConnectionRelayUrl(payload.url), pairingCode });
+  }
+  if (payload.mode === "direct") {
+    return Object.freeze({ mode: "direct", url: normalizeConnectionDirectUrl(payload.url), token: cleanDirectToken(payload.token) });
+  }
+  throw new Error("Connection code is unsupported");
 }
 
 async function hmac(secret, context) {

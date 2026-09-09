@@ -520,9 +520,9 @@ connectionQuickConnect.addEventListener("click", async () => {
   let config;
   try {
     const invitation = parseConnectionCode(connectionCode.value);
-    connectionForm.elements.mode.value = "relay";
+    connectionForm.elements.mode.value = invitation.mode;
     connectionForm.elements.url.value = invitation.url;
-    connectionForm.elements.token.value = invitation.pairingCode;
+    connectionForm.elements.token.value = invitation.mode === "relay" ? invitation.pairingCode : invitation.token;
     connectionForm.elements.name.value ||= defaultClientName(navigator.platform);
     syncConnectionMode();
     config = formBridgeConfig();
