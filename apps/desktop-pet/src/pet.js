@@ -496,7 +496,8 @@ async function probeConnection(config) {
   connectionSave.disabled = true;
   setConnectionCheck("testing", "正在连接", "正在验证中继和 Windows Core…");
   try {
-    const result = await testConnection(config, { clientId: `${clientId}-setup` });
+    const result = await testConnection(config, { clientId });
+    if (result.config.token !== config.token) connectionForm.elements.token.value = result.config.token;
     verifiedConnection = {
       fingerprint: connectionConfigFingerprint(result.config),
       verifiedAt: Date.now(),

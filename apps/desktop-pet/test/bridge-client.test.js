@@ -52,3 +52,20 @@ test("connection probe authenticates before reporting success", async () => {
   assert.equal(result.config.url, "ws://10.0.0.8:8765/");
   assert.equal(result.latencyMs, 12);
 });
+
+test("connection probe persists a replacement token issued after first pairing", async () => {
+  class Socket {
+    constructor() { this.listeners = new Map(); queueMicrotask(() => this.emit("open", {})); }
+    addEventListener(type, listener) { this.listeners.set(type, listener); }
+    emit(type, event) { this.listeners.get(type)?.(event); }
+    send(raw) {
+      const event = JSON.parse(raw);
+      this.emit("message", { data: JSON.stringify({ type: "auth.ok", serverName: "Home Core", replacementToken: "replacement-token-0123456789abcdef" }) });
+    }
+    close() {}
+  }
+  const result = await testBridgeConnection({
+    url: "10.0.0.8", token: "0123456789abcdefghijklmn", name: "我的 Mac",
+  }, { WebSocketImpl: Socket });
+  assert.equal(result.config.token, "replacement-token-0123456789abcdef");
+});

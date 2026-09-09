@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { basename, extname, join } from "node:path";
 import type { CompanionEndpoint } from "./companion-endpoint.ts";
 import type { DeviceControlRouter } from "./device-control-router.ts";
+import type { PairingRegistry } from "./pairing-registry.ts";
 import { ScopedFileService } from "../../file-mcp/src/file-service.ts";
 import { detectImageMediaType, prepareVisionImage, type VisionAdapter } from "./vision.ts";
 
@@ -59,12 +60,14 @@ export class DeviceControlApiServer implements CompanionEndpoint {
   private readonly devices: DeviceControlRouter;
   private readonly vision: VisionAdapter | null;
   private readonly visionMaxImageBytes: number;
+  private readonly pairing: PairingRegistry | null;
 
-  constructor(config: DeviceControlApiConfig, devices: DeviceControlRouter, vision: VisionAdapter | null = null, visionMaxImageBytes = 8 * 1024 * 1024) {
+  constructor(config: DeviceControlApiConfig, devices: DeviceControlRouter, vision: VisionAdapter | null = null, visionMaxImageBytes = 8 * 1024 * 1024, pairing: PairingRegistry | null = null) {
     this.config = config;
     this.devices = devices;
     this.vision = vision;
     this.visionMaxImageBytes = visionMaxImageBytes;
+    this.pairing = pairing;
   }
 
   async run(signal: AbortSignal): Promise<void> {
@@ -85,6 +88,19 @@ export class DeviceControlApiServer implements CompanionEndpoint {
     try {
       if (!authorized(request, this.config.token)) return json(response, 401, { error: "Unauthorized" });
       if (request.method === "GET" && request.url === "/v1/devices") return json(response, 200, { devices: this.devices.list() });
+      if (request.method === "GET" && request.url === "/v1/pairing/devices") return json(response, 200, { devices: this.pairing?.listDevices() ?? [] });
+      if (request.method === "POST" && request.url === "/v1/pairing/invitations") {
+        if (!this.pairing) return json(response, 404, { error: "Pairing is unavailable" });
+        const body = await readJson(request);
+        const ttlMs = Number(body.ttlMs) || undefined;
+        return json(response, 200, this.pairing.createInvitation(ttlMs));
+      }
+      const revoke = /^\/v1\/pairing\/devices\/([0-9a-f-]{36})$/u.exec(request.url ?? "");
+      if (request.method === "DELETE" && revoke) {
+        if (!this.pairing) return json(response, 404, { error: "Pairing is unavailable" });
+        const ok = this.pairing.revokeDevice(revoke[1]);
+        return json(response, ok ? 200 : 404, { ok });
+      }
       if (request.method !== "POST") return json(response, 404, { error: "Not found" });
       const body = await readJson(request);
       if (request.url === "/v1/documents/parse") return json(response, 200, await this.parseDeviceDocument(body));

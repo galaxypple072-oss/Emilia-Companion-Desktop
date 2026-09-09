@@ -30,6 +30,7 @@ import { RuntimeNodeRegistry } from "./runtime-node-registry.ts";
 import { OneBotClient } from "../../qq-gateway/src/onebot-client.ts";
 import { SplitQqClient } from "./qq-client.ts";
 import { createConnectionCode } from "../../../packages/companion-relay-protocol/src/index.js";
+import { PairingRegistry } from "./pairing-registry.ts";
 
 function option(args: string[], name: string): string | undefined {
   const index = args.indexOf(name);
@@ -82,6 +83,8 @@ function usage(): string {
   npm run core:run
   npm run core:status
   npm run core:connection-code -- --url <ws://LAN-IP:8765>
+  npm run core:paired-devices
+  npm run core:revoke-device -- --id <device-id>
   npm run core:send -- --text <message>
   npm run core:remind -- --in <30s|10m|2h|1d> --text <message>
   npm run core:remind -- --at <ISO-8601> --text <message>
@@ -171,11 +174,28 @@ async function main(): Promise<void> {
       if (!bridge) throw new Error("Companion Bridge is not enabled on this Core");
       const url = option(args, "--url");
       if (!url) throw new Error("connection-code requires --url <ws://LAN-IP:8765>");
+      const control = loadDeviceControlApiConfig();
+      if (!control) throw new Error("Core pairing control is unavailable");
+      const response = await fetch(`http://${control.host}:${control.port}/v1/pairing/invitations`, { method: "POST", headers: { authorization: `Bearer ${control.token}`, "content-type": "application/json" }, body: "{}" });
+      if (!response.ok) throw new Error(`Core pairing invitation could not be created (HTTP ${response.status}: ${(await response.text()).slice(0, 120)})`);
+      const invitation = await response.json() as { token?: string; expiresAt?: number };
+      if (!invitation.token || !Number.isFinite(invitation.expiresAt)) throw new Error("Core pairing invitation is malformed");
       console.log(JSON.stringify({
         mode: "direct",
         server_name: bridge.serverName,
-        code: createConnectionCode({ mode: "direct", url, token: bridge.token }),
+        expires_at: invitation.expiresAt,
+        code: createConnectionCode({ mode: "direct", url, token: invitation.token }),
       }));
+      return;
+    }
+    if (command === "paired-devices" || command === "revoke-device") {
+      const control = loadDeviceControlApiConfig();
+      if (!control) throw new Error("Core pairing control is unavailable");
+      const id = command === "revoke-device" ? option(args, "--id") : undefined;
+      if (command === "revoke-device" && !id) throw new Error("revoke-device requires --id <device-id>");
+      const response = await fetch(`http://${control.host}:${control.port}/v1/pairing/devices${id ? `/${encodeURIComponent(id)}` : ""}`, { method: id ? "DELETE" : "GET", headers: { authorization: `Bearer ${control.token}` } });
+      if (!response.ok) throw new Error(id ? `Paired device was not found (HTTP ${response.status}: ${(await response.text()).slice(0, 120)})` : `Core pairing devices could not be read (HTTP ${response.status}: ${(await response.text()).slice(0, 120)})`);
+      console.log(JSON.stringify(await response.json()));
       return;
     }
     if (command === "inbox") {
@@ -353,6 +373,7 @@ async function main(): Promise<void> {
       const bridgeConfig = loadCompanionBridgeConfig();
       const relayConfig = loadCompanionRelayConfig();
       const devices = new DeviceControlRouter();
+      const pairing = new PairingRegistry(store);
       const runtimeNodes = new RuntimeNodeRegistry();
       const useQqWorker = process.env.EMILIA_QQ_CORE_ROUTING?.trim().toLowerCase() === "true";
       const voiceConfig = loadVoiceClientConfig();
@@ -364,9 +385,9 @@ async function main(): Promise<void> {
       const voice = new FallbackVoiceSynthesizer([relayEndpoint, voiceConfig ? new VoiceClient(voiceConfig) : null]);
       const qq = useQqWorker && relayEndpoint ? new SplitQqClient(relayEndpoint, new OneBotClient(oneBot)) : null;
       const companionEndpoints = [
-        bridgeConfig ? new CompanionBridgeServer(bridgeConfig, (request) => runtime.handleCompanionChat(request), devices, (request) => runtime.handleCompanionFileSend(request), (request) => runtime.handleCompanionTask(request), (response) => runtime.synthesizeCompanionVoice(response)) : null,
+        bridgeConfig ? new CompanionBridgeServer(bridgeConfig, (request) => runtime.handleCompanionChat(request), devices, (request) => runtime.handleCompanionFileSend(request), (request) => runtime.handleCompanionTask(request), (response) => runtime.synthesizeCompanionVoice(response), pairing) : null,
         relayEndpoint,
-        deviceApiConfig ? new DeviceControlApiServer(deviceApiConfig, devices, vision, visionConfig?.maxImageBytes) : null,
+        deviceApiConfig ? new DeviceControlApiServer(deviceApiConfig, devices, vision, visionConfig?.maxImageBytes, pairing) : null,
       ].filter((endpoint) => endpoint !== null);
       const companionBridge = companionEndpoints.length ? new CompositeCompanionEndpoint(companionEndpoints) : null;
       runtime = new ProductCoreRuntime(oneBot, core, store, {

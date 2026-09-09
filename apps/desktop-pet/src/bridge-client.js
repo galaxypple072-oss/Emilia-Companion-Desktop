@@ -71,7 +71,9 @@ export function testBridgeConnection(config, {
         ok: true,
         serverName: typeof event.serverName === "string" ? event.serverName : serverName,
         latencyMs: Math.max(0, now() - startedAt),
-        config: normalized,
+        config: typeof event.replacementToken === "string" && event.replacementToken.length >= 24
+          ? { ...normalized, token: event.replacementToken }
+          : normalized,
       });
       if (event.type === "auth.error") finish(new Error(event.message || "访问 Token 不正确"));
     });

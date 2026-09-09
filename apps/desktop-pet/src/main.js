@@ -217,7 +217,7 @@ async function createCoreLanConnectionCode() {
     coreLanConnectionCode = await invoke("core_create_lan_connection_code");
     copy.disabled = false;
     result.dataset.state = "success";
-    result.textContent = "已生成。复制后到另一台 Emilia Companion 的连接设置中粘贴。";
+    result.textContent = "已生成。10 分钟内在另一台 Emilia Companion 的连接设置中粘贴；首次成功连接后此码立即失效。";
   } catch (error) {
     result.dataset.state = "error";
     result.textContent = error instanceof Error ? error.message : String(error);
@@ -232,7 +232,7 @@ $("#core-lan-code-copy").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(coreLanConnectionCode);
     result.dataset.state = "success";
-    result.textContent = "连接码已复制。它只适用于当前局域网，请不要发给陌生人。";
+    result.textContent = "连接码已复制。它只适用于当前局域网且只能使用一次，请不要发给陌生人。";
   } catch (error) {
     result.dataset.state = "error";
     result.textContent = "无法访问剪贴板，请重新生成后手动复制。";

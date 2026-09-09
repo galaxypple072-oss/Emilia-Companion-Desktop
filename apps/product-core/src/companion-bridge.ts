@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { WebSocket, WebSocketServer } from "ws";
 import type { DeviceControlRouter } from "./device-control-router.ts";
+import type { PairingRegistry } from "./pairing-registry.ts";
 
 export const COMPANION_BRIDGE_PROTOCOL = 1;
 
@@ -110,16 +111,18 @@ export class CompanionBridgeServer {
   private readonly onFileSend: ((request: CompanionFileSendRequest) => Promise<CompanionFileSendResponse>) | null;
   private readonly onTask: ((request: CompanionTaskRequest) => Promise<CompanionTaskResponse>) | null;
   private readonly onVoice: ((response: CompanionChatResponse) => Promise<NonNullable<CompanionChatResponse["voice"]> | null>) | null;
+  private readonly pairing: PairingRegistry | null;
   private server: WebSocketServer | null = null;
   private readonly clients = new Map<WebSocket, ClientState>();
 
-  constructor(config: CompanionBridgeConfig, onChat: (request: CompanionChatRequest) => Promise<CompanionChatResponse>, devices: DeviceControlRouter | null = null, onFileSend: ((request: CompanionFileSendRequest) => Promise<CompanionFileSendResponse>) | null = null, onTask: ((request: CompanionTaskRequest) => Promise<CompanionTaskResponse>) | null = null, onVoice: ((response: CompanionChatResponse) => Promise<NonNullable<CompanionChatResponse["voice"]> | null>) | null = null) {
+  constructor(config: CompanionBridgeConfig, onChat: (request: CompanionChatRequest) => Promise<CompanionChatResponse>, devices: DeviceControlRouter | null = null, onFileSend: ((request: CompanionFileSendRequest) => Promise<CompanionFileSendResponse>) | null = null, onTask: ((request: CompanionTaskRequest) => Promise<CompanionTaskResponse>) | null = null, onVoice: ((response: CompanionChatResponse) => Promise<NonNullable<CompanionChatResponse["voice"]> | null>) | null = null, pairing: PairingRegistry | null = null) {
     this.config = config;
     this.onChat = onChat;
     this.devices = devices;
     this.onFileSend = onFileSend;
     this.onTask = onTask;
     this.onVoice = onVoice;
+    this.pairing = pairing;
   }
 
   async run(signal: AbortSignal): Promise<void> {
@@ -174,17 +177,21 @@ export class CompanionBridgeServer {
       return this.send(socket, { type: "error", code: "invalid_json", message: "消息格式不正确" });
     }
     if (!state.authenticated) {
-      if (event.type !== "auth" || typeof event.token !== "string" || !sameToken(event.token, this.config.token)) {
+      const client = event.client && typeof event.client === "object" ? event.client as Record<string, unknown> : {};
+      const clientName = cleanIdentity(client.name, "Desktop");
+      const pairing = event.type === "auth" && typeof event.token === "string"
+        ? this.pairing?.authenticate(event.token, clientName) ?? null
+        : null;
+      if (event.type !== "auth" || typeof event.token !== "string" || (!sameToken(event.token, this.config.token) && !pairing)) {
         this.send(socket, { type: "auth.error", message: "访问 Token 不正确" });
         return socket.close(4003, "Authentication failed");
       }
-      const client = event.client && typeof event.client === "object" ? event.client as Record<string, unknown> : {};
       state.authenticated = true;
       clearTimeout(state.authTimer);
       state.clientId = cleanIdentity(client.id, "desktop");
-      state.clientName = cleanIdentity(client.name, "Desktop");
+      state.clientName = clientName;
       state.connectionKey = `direct:${state.clientId}`;
-      this.send(socket, { type: "auth.ok", clientId: state.clientId, serverName: this.config.serverName });
+      this.send(socket, { type: "auth.ok", clientId: state.clientId, serverName: this.config.serverName, ...(pairing?.replacementToken ? { replacementToken: pairing.replacementToken, pairedDevice: pairing.device } : {}) });
       return;
     }
     if (event.type === "ping") return this.send(socket, { type: "pong", at: Date.now() });
