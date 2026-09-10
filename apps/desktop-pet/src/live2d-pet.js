@@ -23,9 +23,7 @@ function createRenderer(canvas) {
     autoInteraction: false,
     tapInteraction: false,
     randomMotion: false,
-    // The pet window can switch into compact quick-chat mode. Never let a
-    // temporary window aspect ratio stretch Emilia's model.
-    keepAspect: true,
+    keepAspect: false,
     cubismCorePath: CORE_URL,
     zoomEnabled: false,
     enablePan: false,
@@ -204,14 +202,6 @@ export async function createLive2DPet(canvas, { outfit: initialOutfit } = {}) {
     model.setDragging(horizontal, vertical);
   }
 
-  function refreshLayout() {
-    if (!model?.loaded) return false;
-    model.centerModel();
-    neutral = Object.freeze({ x: model.x, y: model.y });
-    if (currentFraming) applyFraming(currentFraming);
-    return true;
-  }
-
   function destroy() {
     stopRenderLoop();
     const candidate = model;
@@ -226,7 +216,6 @@ export async function createLive2DPet(canvas, { outfit: initialOutfit } = {}) {
     setFraming: applyFraming,
     setOutfit,
     lookAt,
-    refreshLayout,
     motion,
     startLipSync,
     stopLipSync,

@@ -108,9 +108,6 @@ function applyPortraitVisibility(hidden) {
   portraitHide.textContent = isHidden ? "显" : "▣";
   portraitHide.setAttribute("aria-label", isHidden ? "显示立绘" : "隐藏立绘，仅保留快捷对话和控制栏");
   portraitHide.title = isHidden ? "显示立绘" : "隐藏立绘，仅保留快捷对话和控制栏";
-  if (!isHidden) {
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => live2dPet?.refreshLayout()));
-  }
 }
 void nativeInvoke("pet_portrait_is_hidden").then(applyPortraitVisibility).catch(() => applyPortraitVisibility(false));
 function reportDiagnostic(message) {
