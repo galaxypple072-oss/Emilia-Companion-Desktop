@@ -1240,6 +1240,23 @@ fn portrait_visibility_path(app: &AppHandle) -> Result<PathBuf, String> {
         .map_err(|error| format!("无法读取桌宠显示设置：{error}"))
 }
 
+fn quit_behavior_path(app: &AppHandle) -> Result<PathBuf, String> { app.path().app_data_dir().map(|directory| directory.join("quit-behavior")).map_err(|error| format!("无法读取退出设置：{error}")) }
+fn quit_behavior(app: &AppHandle) -> String { quit_behavior_path(app).ok().and_then(|path| fs::read_to_string(path).ok()).filter(|value| value.trim() == "stop-background").unwrap_or_else(|| "desktop-only".to_string()) }
+#[tauri::command]
+fn load_quit_behavior(app: AppHandle) -> String { quit_behavior(&app) }
+#[tauri::command]
+fn save_quit_behavior(app: AppHandle, behavior: String) -> Result<String, String> {
+    if !["desktop-only", "stop-background"].contains(&behavior.as_str()) { return Err("不支持的退出行为".to_string()); }
+    let path = quit_behavior_path(&app)?;
+    if let Some(parent) = path.parent() { fs::create_dir_all(parent).map_err(|error| format!("无法保存退出设置：{error}"))?; }
+    fs::write(path, &behavior).map_err(|error| format!("无法保存退出设置：{error}"))?;
+    Ok(behavior)
+}
+#[cfg(target_os = "windows")]
+fn stop_local_background_services() {
+    let _ = powershell_output(r#"Stop-ScheduledTask -TaskName 'Emilia Host Agent' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia QQ Worker' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*start-host-agent.ps1*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Get-Process -Name 'NapCatQQ-Desktop' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"#);
+}
+
 fn portrait_is_hidden(app: &AppHandle) -> bool {
     portrait_visibility_path(app)
         .ok()
@@ -1284,7 +1301,8 @@ fn pet_portrait_is_hidden(app: AppHandle) -> bool {
 
 #[tauri::command]
 fn quit_application(app: AppHandle) {
-    write_app_log("lifecycle", "desktop client quit by user");
+    if quit_behavior(&app) == "stop-background" { #[cfg(target_os = "windows")] stop_local_background_services(); write_app_log("lifecycle", "desktop client quit and background services stopped by user"); }
+    else { write_app_log("lifecycle", "desktop client quit by user; background services retained"); }
     app.exit(0);
 }
 
@@ -1362,6 +1380,8 @@ pub fn run() {
             hide_main_window,
             set_pet_portrait_hidden,
             pet_portrait_is_hidden,
+            load_quit_behavior,
+            save_quit_behavior,
             quit_application,
             load_connection_profile,
             save_connection_profile,

@@ -42,7 +42,7 @@ function navigate(page) {
     void refreshVoiceLog();
     void refreshPairedDevices();
   }
-  if (page === "settings") { void refreshAgentSetup(); void refreshRelaySetup(); }
+  if (page === "settings") { void refreshAgentSetup(); void refreshRelaySetup(); void refreshQuitBehavior(); }
 }
 
 for (const button of $$(`[data-page]`)) button.addEventListener("click", () => navigate(button.dataset.page));
@@ -52,6 +52,8 @@ $("#main-show-portrait").addEventListener("click", async () => {
   catch (error) { console.warn("[desktop] failed to show portrait", error); }
 });
 $("#main-quit-app").addEventListener("click", () => { void invoke("quit_application"); });
+async function refreshQuitBehavior() { const select = $("#quit-behavior-select"); if (!select) return; try { const behavior = await invoke("load_quit_behavior"); select.value = behavior === "stop-background" ? behavior : "desktop-only"; $("#quit-behavior-result").textContent = select.value === "stop-background" ? "点叉叉会同时停止本机 Core、QQ、语音与 Host Agent。" : "点叉叉只关闭桌宠；本机 Core、QQ 和语音会继续后台运行。"; } catch (error) { $("#quit-behavior-result").dataset.state = "error"; $("#quit-behavior-result").textContent = error instanceof Error ? error.message : String(error); } }
+$("#quit-behavior-select").addEventListener("change", async (event) => { const select = event.currentTarget; const result = $("#quit-behavior-result"); select.disabled = true; try { const behavior = await invoke("save_quit_behavior", { behavior: select.value }); result.dataset.state = "success"; result.textContent = behavior === "stop-background" ? "已保存：下次点叉叉会停止本机后台服务。" : "已保存：下次点叉叉仅关闭桌宠。"; } catch (error) { result.dataset.state = "error"; result.textContent = error instanceof Error ? error.message : String(error); } finally { select.disabled = false; } });
 
 function storedHistory() {
   try {
