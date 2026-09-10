@@ -80,6 +80,7 @@ button { color: inherit; }
 .page.active { display: block; animation: page-in 180ms ease both; }
 @keyframes page-in { from { opacity: 0; transform: translateY(3px); } }
 .page-header { display: flex; justify-content: space-between; gap: 22px; align-items: flex-end; max-width: 1120px; margin: 0 auto 26px; }
+.chat-page-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .page-header h1 { margin: 3px 0 0; color: #3e3348; font-family: Georgia, "Songti SC", serif; font-size: 29px; font-weight: 600; letter-spacing: -.02em; }
 .page-header p { margin: 7px 0 0; color: #918598; font-size: 12px; }
 .eyebrow { color: #9b82b1; font-size: 9px; font-weight: 800; letter-spacing: .16em; }

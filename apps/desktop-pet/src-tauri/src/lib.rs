@@ -1063,6 +1063,55 @@ fn hide_main_window(app: AppHandle) -> tauri::Result<()> {
     Ok(())
 }
 
+fn portrait_visibility_path(app: &AppHandle) -> Result<PathBuf, String> {
+    app.path().app_data_dir()
+        .map(|directory| directory.join("portrait-visibility"))
+        .map_err(|error| format!("无法读取桌宠显示设置：{error}"))
+}
+
+fn portrait_is_hidden(app: &AppHandle) -> bool {
+    portrait_visibility_path(app)
+        .ok()
+        .and_then(|path| fs::read_to_string(path).ok())
+        .is_some_and(|value| value.trim() == "hidden")
+}
+
+fn save_portrait_visibility(app: &AppHandle, hidden: bool) -> Result<(), String> {
+    let path = portrait_visibility_path(app)?;
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|error| format!("无法保存桌宠显示设置：{error}"))?;
+    }
+    fs::write(path, if hidden { "hidden" } else { "visible" })
+        .map_err(|error| format!("无法保存桌宠显示设置：{error}"))
+}
+
+#[tauri::command]
+fn set_pet_portrait_hidden(app: AppHandle, hidden: bool) -> Result<(), String> {
+    save_portrait_visibility(&app, hidden)?;
+    let Some(window) = app.get_webview_window("pet") else {
+        return Err("桌宠窗口不可用".to_string());
+    };
+    if hidden {
+        window.hide().map_err(|error| error.to_string())?;
+        show_main_window(app.clone(), Some("chat".to_string())).map_err(|error| error.to_string())?;
+        write_app_log("appearance", "portrait hidden; chat window retained");
+    } else {
+        window.show().map_err(|error| error.to_string())?;
+        if window.is_minimized().map_err(|error| error.to_string())? {
+            window.unminimize().map_err(|error| error.to_string())?;
+        }
+        window.set_focus().map_err(|error| error.to_string())?;
+        write_app_log("appearance", "portrait shown");
+    }
+    Ok(())
+}
+
+#[tauri::command]
+fn quit_application(app: AppHandle) {
+    write_app_log("lifecycle", "desktop client quit by user");
+    app.exit(0);
+}
+
 fn connection_profile_entry() -> Result<keyring::Entry, String> {
     keyring::Entry::new(CONNECTION_PROFILE_SERVICE, CONNECTION_PROFILE_ACCOUNT)
         .map_err(|error| format!("无法访问系统钥匙串：{error}"))
@@ -1135,6 +1184,8 @@ pub fn run() {
             set_wardrobe_expanded,
             show_main_window,
             hide_main_window,
+            set_pet_portrait_hidden,
+            quit_application,
             load_connection_profile,
             save_connection_profile,
             device_get_info,
@@ -1172,7 +1223,10 @@ pub fn run() {
             write_app_log("lifecycle", "desktop client started");
             #[cfg(target_os = "windows")]
             ensure_voice_stack();
-            if let Some(window) = app.get_webview_window("pet") {
+            let handle = app.handle().clone();
+            if portrait_is_hidden(&handle) {
+                show_main_window(handle, Some("chat".to_string()))?;
+            } else if let Some(window) = app.get_webview_window("pet") {
                 place_at_bottom_right(&window)?;
                 window.show()?;
             }

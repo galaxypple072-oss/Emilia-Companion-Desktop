@@ -46,6 +46,11 @@ function navigate(page) {
 
 for (const button of $$(`[data-page]`)) button.addEventListener("click", () => navigate(button.dataset.page));
 for (const button of $$(`[data-open-page]`)) button.addEventListener("click", () => navigate(button.dataset.openPage));
+$("#main-show-portrait").addEventListener("click", async () => {
+  try { await invoke("set_pet_portrait_hidden", { hidden: false }); }
+  catch (error) { console.warn("[desktop] failed to show portrait", error); }
+});
+$("#main-quit-app").addEventListener("click", () => { void invoke("quit_application"); });
 
 function storedHistory() {
   try {

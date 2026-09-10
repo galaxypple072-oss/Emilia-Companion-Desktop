@@ -22,6 +22,8 @@ const chatPanel = document.querySelector("#chat-panel");
 const chatToggle = document.querySelector("#chat-toggle");
 const wardrobePanel = document.querySelector("#wardrobe-panel");
 const wardrobeToggle = document.querySelector("#wardrobe-toggle");
+const portraitHide = document.querySelector("#portrait-hide");
+const appQuit = document.querySelector("#app-quit");
 const wardrobeClose = document.querySelector("#wardrobe-close");
 const wardrobeOptions = document.querySelector("#wardrobe-options");
 const wardrobeStatus = document.querySelector("#wardrobe-status");
@@ -467,6 +469,13 @@ chatToggle.addEventListener("click", () => { void openMainWindow("chat"); });
 chatClose.addEventListener("click", () => setChatExpanded(false));
 wardrobeToggle.addEventListener("click", () => { void openMainWindow("appearance"); });
 wardrobeClose.addEventListener("click", () => setWardrobeExpanded(false));
+portraitHide.addEventListener("click", async () => {
+  portraitHide.disabled = true;
+  try { await nativeInvoke("set_pet_portrait_hidden", { hidden: true }); }
+  catch (error) { console.warn("[desktop] failed to hide portrait", error); }
+  finally { portraitHide.disabled = false; }
+});
+appQuit.addEventListener("click", () => { void nativeInvoke("quit_application"); });
 
 settingsToggle.addEventListener("click", () => {
   if (connectionForm.classList.contains("collapsed")) showConnectionWizard();
