@@ -166,6 +166,12 @@ button { color: inherit; }
 .service-metrics > div:last-child { border-right: 0; }
 .service-metrics span { color: #998da0; font-size: 8px; }
 .service-metrics strong { color: #554060; font-size: 11px; }
+.setup-guide-card { display: grid; gap: 12px; }
+.setup-steps { display: grid; gap: 10px; margin: 0; padding-left: 20px; color: #776a80; font-size: 11px; line-height: 1.55; }
+.setup-steps li { padding-left: 3px; }
+.setup-steps strong { display: block; color: #564263; font-size: 12px; }
+.setup-command { margin: 0; color: #776a80; font-size: 10px; line-height: 1.65; }
+.setup-guide-card code { padding: 1px 4px; border-radius: 4px; background: #f1ebf4; color: #634b76; word-break: break-word; }
 .voice-model-detail { display: grid; gap: 5px; margin-top: 10px; color: #93859d; font-size: 9px; }
 .voice-model-detail span { display: flex; gap: 8px; align-items: baseline; }
 .voice-model-detail strong { color: #5b4767; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

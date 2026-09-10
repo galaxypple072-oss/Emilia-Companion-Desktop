@@ -42,6 +42,7 @@ function navigate(page) {
     void refreshVoiceLog();
     void refreshPairedDevices();
   }
+  if (page === "settings") void refreshAgentSetup();
 }
 
 for (const button of $$(`[data-page]`)) button.addEventListener("click", () => navigate(button.dataset.page));
@@ -211,6 +212,7 @@ function escapeHtml(value) {
 
 let coreServiceBusy = false;
 let coreLanConnectionCode = "";
+let coreRelayConnectionCode = "";
 let pairedDevicesBusy = false;
 
 function formatPairedDeviceTime(value) {
@@ -321,6 +323,58 @@ $("#core-lan-code-copy").addEventListener("click", async () => {
     result.dataset.state = "success";
     result.textContent = "连接码已复制。它只适用于当前局域网且只能使用一次，请不要发给陌生人。";
   } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = "无法访问剪贴板，请重新生成后手动复制。";
+  }
+});
+
+async function refreshAgentSetup() {
+  const detail = $("#agent-setup-detail");
+  if (!detail) return;
+  const badge = $("#agent-setup-badge");
+  try {
+    const status = await invoke("core_agent_setup_status");
+    const configured = status.supported && status.configured;
+    badge.dataset.state = configured ? "online" : "offline";
+    badge.textContent = configured ? "已配置" : (status.supported ? "未配置" : "远端主机");
+    detail.textContent = status.detail || "正在等待配置";
+    $("#agent-setup-url").textContent = status.baseUrl || "—";
+    $("#agent-setup-model").textContent = status.model || "—";
+  } catch (error) {
+    badge.dataset.state = "error";
+    badge.textContent = "检查失败";
+    detail.textContent = error instanceof Error ? error.message : String(error);
+  }
+}
+
+async function createCoreRelayConnectionCode() {
+  const create = $("#core-relay-code-create");
+  const copy = $("#core-relay-code-copy");
+  const result = $("#core-relay-code-result");
+  create.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = "正在生成私有中继连接码…";
+  try {
+    coreRelayConnectionCode = await invoke("core_create_relay_connection_code");
+    copy.disabled = false;
+    result.dataset.state = "success";
+    result.textContent = "已生成。把它粘贴到另一台设备的连接设置；中继地址和配对密钥不会单独展示。";
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally {
+    create.disabled = false;
+  }
+}
+
+$("#core-relay-code-create").addEventListener("click", () => { void createCoreRelayConnectionCode(); });
+$("#core-relay-code-copy").addEventListener("click", async () => {
+  const result = $("#core-relay-code-result");
+  try {
+    await navigator.clipboard.writeText(coreRelayConnectionCode);
+    result.dataset.state = "success";
+    result.textContent = "中继连接码已复制。它可用于你的已配置私有中继；不要发送给陌生人。";
+  } catch {
     result.dataset.state = "error";
     result.textContent = "无法访问剪贴板，请重新生成后手动复制。";
   }
@@ -932,17 +986,16 @@ $("#main-quick-connect").addEventListener("click", async () => {
   result.textContent = "正在验证中继与 Windows Core…";
   try {
     const invitation = parseConnectionCode(code);
-    const config = validateConnectionConfig({
-      mode: "relay",
-      url: invitation.url,
-      token: invitation.pairingCode,
-      name: defaultClientName(navigator.platform),
+    const config = validateConnectionConfig(invitation.mode === "relay" ? {
+      mode: "relay", url: invitation.url, token: invitation.pairingCode, name: defaultClientName(navigator.platform),
+    } : {
+      mode: "direct", url: invitation.url, token: invitation.token, name: defaultClientName(navigator.platform),
     });
     const probe = await testConnection(config, { clientId: `desktop-main-setup-${crypto.randomUUID()}` });
     const verification = { fingerprint: connectionConfigFingerprint(probe.config), verifiedAt: Date.now(), serverName: probe.serverName };
     await savePersistentConnectionProfile(config, verification);
     result.dataset.state = "success";
-    result.textContent = `连接验证成功 · ${probe.serverName} · ${probe.latencyMs} ms`;
+    result.textContent = `${invitation.mode === "direct" ? "局域网" : "私有中继"}连接验证成功 · ${probe.serverName} · ${probe.latencyMs} ms`;
     $("#main-connection-code").value = "";
     await emit?.("companion:connection-profile-updated");
   } catch (error) {

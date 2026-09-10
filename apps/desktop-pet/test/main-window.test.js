@@ -41,6 +41,20 @@ test("Core page manages paired devices without exposing pairing secrets", async 
   assert.match(rust, /fn core_revoke_paired_device/);
 });
 
+test("settings guide supports API setup plus LAN and private-relay connection codes", async () => {
+  const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
+  const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
+  const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
+  assert.match(html, /首次配置指引/);
+  assert.match(html, /id=["']agent-setup-card["']/);
+  assert.match(html, /id=["']core-relay-code-create["']/);
+  assert.match(html, /configure-agent-windows\.ps1/);
+  assert.match(main, /invitation\.mode === "relay"/);
+  assert.match(main, /core_create_relay_connection_code/);
+  assert.match(rust, /fn core_create_relay_connection_code/);
+  assert.match(rust, /fn core_agent_setup_status/);
+});
+
 test("portrait can be hidden while quick chat and controls remain available", async () => {
   const petHtml = await readFile(new URL("../src/index.html", import.meta.url), "utf8");
   const pet = await readFile(new URL("../src/pet.js", import.meta.url), "utf8");

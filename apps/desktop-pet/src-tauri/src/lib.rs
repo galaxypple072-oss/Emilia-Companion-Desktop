@@ -71,6 +71,16 @@ struct CoreServiceStatus {
     detail: String,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct AgentSetupStatus {
+    supported: bool,
+    configured: bool,
+    base_url: String,
+    model: String,
+    detail: String,
+}
+
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct PairedDevice {
@@ -514,6 +524,52 @@ $address"#)?;
     }
     #[cfg(not(target_os = "windows"))]
     Err("只有托管 Core 的 Windows 设备能生成局域网连接码".to_string())
+}
+
+#[tauri::command]
+fn core_create_relay_connection_code() -> Result<String, String> {
+    #[cfg(target_os = "windows")]
+    {
+        if !core_service_status()?.running {
+            return Err("Core 尚未启动，无法生成中继连接码".to_string());
+        }
+        let node = PathBuf::from(r"C:\Program Files\nodejs\node.exe");
+        let cli = PathBuf::from(r"C:\Users\zhyje\personal-companion\apps\product-core\src\cli.ts");
+        if !node.is_file() || !cli.is_file() { return Err("Core connection-code tool is unavailable".to_string()); }
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        let output = Command::new(node)
+            .args(["--experimental-strip-types", cli.to_string_lossy().as_ref(), "relay-connection-code"])
+            .current_dir(r"C:\Users\zhyje\personal-companion")
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+            .map_err(|error| format!("无法生成中继连接码：{error}"))?;
+        if !output.status.success() { return Err(redact_voice_detail(String::from_utf8_lossy(&output.stderr).into_owned())); }
+        let payload: serde_json::Value = serde_json::from_slice(&output.stdout)
+            .map_err(|_| "Core 返回的中继连接码格式异常".to_string())?;
+        let code = payload["code"].as_str().unwrap_or("").trim();
+        if code.is_empty() { return Err("Core 没有生成中继连接码".to_string()); }
+        write_app_log("connection", "generated a private relay connection code");
+        return Ok(code.to_string());
+    }
+    #[cfg(not(target_os = "windows"))]
+    Err("只有托管 Core 的 Windows 设备能生成中继连接码".to_string())
+}
+
+#[tauri::command]
+fn core_agent_setup_status() -> Result<AgentSetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let env_path = PathBuf::from(r"C:\Users\zhyje\personal-companion\.env");
+        let text = fs::read_to_string(env_path).unwrap_or_default();
+        let value = |key: &str| text.lines().find_map(|line| line.strip_prefix(&format!("{key}=")).map(str::trim)).unwrap_or("").trim_matches('"').to_string();
+        let base_url = value("AGENT_BASE_URL");
+        let model = value("AGENT_MODEL");
+        let configured = !value("AGENT_API_KEY").is_empty() && !base_url.is_empty() && !model.is_empty();
+        return Ok(AgentSetupStatus { supported: true, configured, base_url, model, detail: if configured { "密钥已由 Core 本地保存；客户端不会读取或显示它。".to_string() } else { "尚未配置模型 API Key；QQ 和桌面聊天无法获得模型回复。".to_string() } });
+    }
+    #[cfg(not(target_os = "windows"))]
+    Ok(AgentSetupStatus { supported: false, configured: false, base_url: String::new(), model: String::new(), detail: "请在托管 Core 的 Windows 设备上配置模型。".to_string() })
 }
 
 fn run_core_pairing_cli(arguments: &[&str]) -> Result<serde_json::Value, String> {
@@ -1191,6 +1247,8 @@ pub fn run() {
             core_service_status,
             core_service_control,
             core_create_lan_connection_code,
+            core_create_relay_connection_code,
+            core_agent_setup_status,
             core_list_paired_devices,
             core_revoke_paired_device,
             core_read_log,

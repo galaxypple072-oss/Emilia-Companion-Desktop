@@ -215,6 +215,21 @@
               <button id="main-quick-connect" class="primary-action wide">验证并连接</button>
               <output id="main-connection-result" class="inline-result" data-state="idle">等待连接码</output>
             </article>
+            <article class="content-card setup-guide-card">
+              <div class="section-heading"><div><h2>首次配置指引</h2><p>不需要手填 IP、端口或把密钥发给客户端</p></div></div>
+              <ol class="setup-steps"><li><strong>准备主机</strong><span>在一台 Windows 或 macOS 上运行唯一的 Core；Windows 端由 Host Agent 静默守护。</span></li><li><strong>配置模型</strong><span>仅在 Core 主机设置 API 地址、模型与 Key。Key 只保存在主机的 <code>.env</code>，不会同步到桌宠、日志或聊天记录。</span></li><li><strong>局域网连接</strong><span>主机的“Core 服务”页生成一次性连接码；另一台设备在本页粘贴即可。它十分钟有效且只能用一次。</span></li><li><strong>跨网络连接</strong><span>部署你自己的私有中继并启用 <code>wss://</code>；再由主机生成中继连接码。中继只转发加密数据。</span></li></ol>
+            </article>
+            <article class="content-card setup-guide-card" id="agent-setup-card">
+              <div class="section-heading"><div><h2>模型 API</h2><p id="agent-setup-detail">正在检查 Core 主机配置</p></div><span id="agent-setup-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="service-metrics"><div><span>服务地址</span><strong id="agent-setup-url">—</strong></div><div><span>模型</span><strong id="agent-setup-model">—</strong></div></div>
+              <p class="setup-command">在 Windows Core 主机打开 PowerShell，执行：<code>powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\configure-agent-windows.ps1</code>。脚本从剪贴板读取 Key，完成后自动清空剪贴板，再在 Core 页面点“重新启动”。</p>
+            </article>
+            <article class="content-card setup-guide-card">
+              <div class="section-heading"><div><h2>私有中继连接</h2><p>只使用你自己部署的中继；不依赖开发者服务器</p></div></div>
+              <p class="setup-command">部署说明见仓库 <code>docs/private-relay.md</code>：配置 DNS 与 TLS 后，把 <code>COMPANION_RELAY_ENABLED=true</code>、中继 <code>wss://</code> 地址和配对码写入 Core 主机的 <code>.env</code>，重启 Core。</p>
+              <div class="service-actions"><button type="button" id="core-relay-code-create" class="secondary-action">生成中继连接码</button><button type="button" id="core-relay-code-copy" class="secondary-action" disabled>复制</button></div>
+              <output id="core-relay-code-result" class="inline-result" data-state="idle">只有已启用私有中继的 Core 主机可以生成；连接码不展示中继配对密钥。</output>
+            </article>
             <article class="content-card">
               <div class="section-heading"><div><h2>模块职责</h2><p>界面、控制层与 Core 独立运行</p></div></div>
               <div class="architecture-list"><div><span>Companion UI</span><small>桌宠、聊天与设置；不持有系统权限</small></div><div><span>Device Agent</span><small>本机权限、文件和屏幕操作；可单独关闭</small></div><div><span>Emilia Core</span><small>人格、记忆、QQ 与工具决策；独立后台进程</small></div></div>

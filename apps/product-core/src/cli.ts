@@ -83,6 +83,7 @@ function usage(): string {
   npm run core:run
   npm run core:status
   npm run core:connection-code -- --url <ws://LAN-IP:8765>
+  npm run core:relay-connection-code
   npm run core:paired-devices
   npm run core:revoke-device -- --id <device-id>
   npm run core:send -- --text <message>
@@ -185,6 +186,16 @@ async function main(): Promise<void> {
         server_name: bridge.serverName,
         expires_at: invitation.expiresAt,
         code: createConnectionCode({ mode: "direct", url, token: invitation.token }),
+      }));
+      return;
+    }
+    if (command === "relay-connection-code") {
+      const relay = loadCompanionRelayConfig();
+      if (!relay) throw new Error("Private relay is not enabled on this Core");
+      console.log(JSON.stringify({
+        mode: "relay",
+        server_name: relay.serverName,
+        code: createConnectionCode({ mode: "relay", url: relay.url, pairingCode: relay.pairingCode }),
       }));
       return;
     }
