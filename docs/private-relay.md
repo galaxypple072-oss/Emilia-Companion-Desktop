@@ -43,64 +43,34 @@ The desktop connection wizard supports both `Private relay` and `LAN direct` mod
 For a real deployment, place the relay behind a TLS reverse proxy and use `wss://`.
 Do not expose the development `ws://` endpoint to the internet.
 
-## Ubuntu/Debian cloud deployment
+## Ubuntu/Debian cloud deployment (one command)
 
 Create a DNS A record such as `relay.example.com` pointing to the server's public
 IPv4 address. Allow inbound TCP 80 and TCP/UDP 443 in the cloud firewall. Do not
 open port 8876 publicly; it exists only on the private Compose network.
 
-Install Docker Engine and the Compose plugin from Docker's official repository.
-Do not upload the whole repository: the Live2D and desktop assets are several
-gigabytes and the relay needs only a few small files. From the repository root,
-preview the exact minimal upload first:
+Create the DNS record first, then log into the Ubuntu/Debian server and run one
+command (replace the domain):
 
 ```bash
-rsync -avnR \
-  infra/relay/ \
-  apps/companion-relay/package.json \
-  apps/companion-relay/src/server.ts \
-  USER@SERVER:/opt/personal-companion/
+curl -fsSL https://raw.githubusercontent.com/galaxypple072-oss/Emilia-Companion-Desktop/main/scripts/install-relay-ubuntu.sh \
+  | sudo bash -s -- --domain relay.example.com
 ```
 
-After verifying that the preview contains only those paths, remove `n` from
-`-avnR` to perform the upload:
+The installer installs Docker if needed, downloads only the relay source to
+`/opt/emilia-relay`, generates a private path plus an end-to-end pairing code,
+starts Caddy with TLS, and prints the two values to paste into the desktop
+app’s graphical **Settings → Private relay connection** form. It is safe to
+run again for the same domain and retains the existing secrets.
 
-```bash
-rsync -avR \
-  infra/relay/ \
-  apps/companion-relay/package.json \
-  apps/companion-relay/src/server.ts \
-  USER@SERVER:/opt/personal-companion/
-```
-
-Then log in to the server and create the deployment environment:
-
-```bash
-cd personal-companion
-cp infra/relay/.env.example infra/relay/.env
-nano infra/relay/.env
-```
-
-Set `RELAY_DOMAIN` to the DNS name. Generate an unguessable private WebSocket
-path and place the result in `RELAY_PATH` (including the leading slash):
-
-```bash
-sed -i "s|^RELAY_PATH=.*|RELAY_PATH=/$(openssl rand -hex 24)|" infra/relay/.env
-```
-
-Then deploy:
-
-```bash
-docker compose --env-file infra/relay/.env -f infra/relay/compose.yml up -d --build
-docker compose --env-file infra/relay/.env -f infra/relay/compose.yml ps
-docker compose --env-file infra/relay/.env -f infra/relay/compose.yml logs --tail 100
-```
+The installer can open UFW when it is enabled, but a cloud provider firewall
+still needs TCP 80 and TCP/UDP 443 allowed manually.
 
 Caddy obtains and renews the public TLS certificate. Its persistent certificate
 state is stored in named volumes. Both containers use `restart: unless-stopped`,
 so they return after a host reboot.
 
-Update an existing deployment after copying or pulling new code:
+Update an existing deployment by rerunning the same command:
 
 ```bash
 docker compose --env-file infra/relay/.env -f infra/relay/compose.yml up -d --build
