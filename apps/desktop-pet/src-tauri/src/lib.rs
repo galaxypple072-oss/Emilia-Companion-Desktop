@@ -81,6 +81,39 @@ struct AgentSetupStatus {
     detail: String,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct RelaySetupStatus {
+    supported: bool,
+    enabled: bool,
+    url: String,
+    pairing_configured: bool,
+    detail: String,
+}
+
+fn companion_env_path() -> PathBuf {
+    PathBuf::from(r"C:\Users\zhyje\personal-companion\.env")
+}
+
+fn update_companion_env(entries: &[(&str, String)]) -> Result<(), String> {
+    let path = companion_env_path();
+    let existing = fs::read_to_string(&path).unwrap_or_default();
+    let prefixes = entries.iter().map(|(key, _)| format!("{key}=")).collect::<Vec<_>>();
+    let mut lines = existing.lines()
+        .filter(|line| !prefixes.iter().any(|prefix| line.starts_with(prefix)))
+        .map(str::to_string)
+        .collect::<Vec<_>>();
+    lines.extend(entries.iter().map(|(key, value)| format!("{key}={value}")));
+    fs::write(&path, format!("{}\n", lines.join("\n"))).map_err(|error| format!("无法保存 Core 配置：{error}"))
+}
+
+#[cfg(target_os = "windows")]
+fn restart_local_core_after_configuration() -> Result<(), String> {
+    powershell_output("Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair | Out-Null")?;
+    write_app_log("core", "configuration saved; Core restart requested");
+    Ok(())
+}
+
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct PairedDevice {
@@ -560,7 +593,7 @@ fn core_create_relay_connection_code() -> Result<String, String> {
 fn core_agent_setup_status() -> Result<AgentSetupStatus, String> {
     #[cfg(target_os = "windows")]
     {
-        let env_path = PathBuf::from(r"C:\Users\zhyje\personal-companion\.env");
+        let env_path = companion_env_path();
         let text = fs::read_to_string(env_path).unwrap_or_default();
         let value = |key: &str| text.lines().find_map(|line| line.strip_prefix(&format!("{key}=")).map(str::trim)).unwrap_or("").trim_matches('"').to_string();
         let base_url = value("AGENT_BASE_URL");
@@ -570,6 +603,59 @@ fn core_agent_setup_status() -> Result<AgentSetupStatus, String> {
     }
     #[cfg(not(target_os = "windows"))]
     Ok(AgentSetupStatus { supported: false, configured: false, base_url: String::new(), model: String::new(), detail: "请在托管 Core 的 Windows 设备上配置模型。".to_string() })
+}
+
+#[tauri::command]
+fn core_configure_agent(base_url: String, model: String, api_key: String) -> Result<AgentSetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let url = url::Url::parse(base_url.trim()).map_err(|_| "API 地址格式不正确".to_string())?;
+        if !["http", "https"].contains(&url.scheme()) || !url.username().is_empty() || url.password().is_some() { return Err("API 地址只能是普通的 http(s) 地址，不能包含账号或密码".to_string()); }
+        let model = model.trim();
+        if model.is_empty() || model.len() > 120 { return Err("请填写有效的模型名称".to_string()); }
+        let api_key = api_key.trim();
+        if api_key.len() < 8 || api_key.len() > 512 || !api_key.bytes().all(|byte| byte.is_ascii_graphic()) { return Err("请粘贴有效的 API Key（不含空格）".to_string()); }
+        update_companion_env(&[
+            ("AGENT_MODE", "harness".to_string()), ("AGENT_BASE_URL", url.to_string()), ("AGENT_API_KEY", api_key.to_string()), ("AGENT_MODEL", model.to_string()),
+            ("AGENT_THINKING", "disabled".to_string()), ("AGENT_MAX_TOKENS", "800".to_string()), ("AGENT_TEMPERATURE", "0.8".to_string()),
+            ("AGENT_TIMEOUT_MS", "60000".to_string()), ("AGENT_CONTEXT_MESSAGES", "20".to_string()),
+        ])?;
+        restart_local_core_after_configuration()?;
+        return core_agent_setup_status();
+    }
+    #[cfg(not(target_os = "windows"))]
+    { let _ = (base_url, model, api_key); Err("请在托管 Core 的 Windows 设备上配置模型".to_string()) }
+}
+
+#[tauri::command]
+fn core_relay_setup_status() -> Result<RelaySetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let text = fs::read_to_string(companion_env_path()).unwrap_or_default();
+        let value = |key: &str| text.lines().find_map(|line| line.strip_prefix(&format!("{key}=")).map(str::trim)).unwrap_or("").trim_matches('"').to_string();
+        let enabled = value("COMPANION_RELAY_ENABLED").eq_ignore_ascii_case("true");
+        let url = value("COMPANION_RELAY_URL");
+        let pairing_configured = !value("COMPANION_RELAY_PAIRING_CODE").is_empty();
+        return Ok(RelaySetupStatus { supported: true, enabled, url, pairing_configured, detail: if enabled && pairing_configured { "私有中继已启用；可以生成连接码。".to_string() } else { "尚未启用私有中继。保存后 Core 会自动重启并校验配置。".to_string() } });
+    }
+    #[cfg(not(target_os = "windows"))]
+    Ok(RelaySetupStatus { supported: false, enabled: false, url: String::new(), pairing_configured: false, detail: "请在托管 Core 的 Windows 设备上配置私有中继。".to_string() })
+}
+
+#[tauri::command]
+fn core_configure_relay(url: String, pairing_code: String) -> Result<RelaySetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let url = url::Url::parse(url.trim()).map_err(|_| "中继地址格式不正确".to_string())?;
+        if url.scheme() != "wss" || !url.username().is_empty() || url.password().is_some() { return Err("公网中继必须使用不含账号密码的 wss:// 地址".to_string()); }
+        let pairing_code = pairing_code.trim();
+        if !pairing_code.starts_with("emilia1.") || pairing_code.len() < 32 || pairing_code.len() > 512 { return Err("请粘贴完整的中继配对码".to_string()); }
+        update_companion_env(&[("COMPANION_RELAY_ENABLED", "true".to_string()), ("COMPANION_RELAY_URL", url.to_string()), ("COMPANION_RELAY_PAIRING_CODE", pairing_code.to_string())])?;
+        restart_local_core_after_configuration()?;
+        return core_relay_setup_status();
+    }
+    #[cfg(not(target_os = "windows"))]
+    { let _ = (url, pairing_code); Err("请在托管 Core 的 Windows 设备上配置私有中继".to_string()) }
 }
 
 fn run_core_pairing_cli(arguments: &[&str]) -> Result<serde_json::Value, String> {
@@ -1249,6 +1335,9 @@ pub fn run() {
             core_create_lan_connection_code,
             core_create_relay_connection_code,
             core_agent_setup_status,
+            core_configure_agent,
+            core_relay_setup_status,
+            core_configure_relay,
             core_list_paired_devices,
             core_revoke_paired_device,
             core_read_log,

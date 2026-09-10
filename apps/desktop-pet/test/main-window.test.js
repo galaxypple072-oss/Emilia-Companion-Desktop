@@ -45,14 +45,20 @@ test("settings guide supports API setup plus LAN and private-relay connection co
   const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
   const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
   const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
-  assert.match(html, /首次配置指引/);
+  assert.match(html, /首次配置/);
   assert.match(html, /id=["']agent-setup-card["']/);
+  assert.match(html, /id=["']agent-setup-form["']/);
+  assert.match(html, /id=["']relay-setup-form["']/);
   assert.match(html, /id=["']core-relay-code-create["']/);
-  assert.match(html, /configure-agent-windows\.ps1/);
+  assert.doesNotMatch(html, /configure-agent-windows\.ps1/);
   assert.match(main, /invitation\.mode === "relay"/);
+  assert.match(main, /core_configure_agent/);
+  assert.match(main, /core_configure_relay/);
   assert.match(main, /core_create_relay_connection_code/);
   assert.match(rust, /fn core_create_relay_connection_code/);
   assert.match(rust, /fn core_agent_setup_status/);
+  assert.match(rust, /fn core_configure_agent/);
+  assert.match(rust, /fn core_configure_relay/);
 });
 
 test("portrait can be hidden while quick chat and controls remain available", async () => {

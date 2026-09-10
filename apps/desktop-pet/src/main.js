@@ -42,7 +42,7 @@ function navigate(page) {
     void refreshVoiceLog();
     void refreshPairedDevices();
   }
-  if (page === "settings") void refreshAgentSetup();
+  if (page === "settings") { void refreshAgentSetup(); void refreshRelaySetup(); }
 }
 
 for (const button of $$(`[data-page]`)) button.addEventListener("click", () => navigate(button.dataset.page));
@@ -340,12 +340,62 @@ async function refreshAgentSetup() {
     detail.textContent = status.detail || "正在等待配置";
     $("#agent-setup-url").textContent = status.baseUrl || "—";
     $("#agent-setup-model").textContent = status.model || "—";
+    if (status.baseUrl) $("#agent-setup-base-url").value = status.baseUrl;
+    if (status.model) $("#agent-setup-model-input").value = status.model;
   } catch (error) {
     badge.dataset.state = "error";
     badge.textContent = "检查失败";
     detail.textContent = error instanceof Error ? error.message : String(error);
   }
 }
+
+async function refreshRelaySetup() {
+  const detail = $("#relay-setup-detail");
+  if (!detail) return;
+  try {
+    const status = await invoke("core_relay_setup_status");
+    detail.textContent = status.detail || "尚未启用私有中继。";
+    if (status.url) $("#relay-setup-url").value = status.url;
+  } catch (error) { detail.textContent = error instanceof Error ? error.message : String(error); }
+}
+
+$("#agent-setup-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = $("#agent-setup-form button");
+  const result = $("#agent-setup-result");
+  button.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = "正在安全保存模型配置并重启 Core…";
+  try {
+    await invoke("core_configure_agent", { baseUrl: $("#agent-setup-base-url").value, model: $("#agent-setup-model-input").value, apiKey: $("#agent-setup-key").value });
+    $("#agent-setup-key").value = "";
+    result.dataset.state = "success";
+    result.textContent = "模型已配置，Core 正在后台重启。无需复制命令或再次粘贴 Key。";
+    await refreshAgentSetup();
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally { button.disabled = false; }
+});
+
+$("#relay-setup-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = $("#relay-setup-form button");
+  const result = $("#core-relay-code-result");
+  button.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = "正在保存私有中继并重启 Core…";
+  try {
+    await invoke("core_configure_relay", { url: $("#relay-setup-url").value, pairingCode: $("#relay-setup-code").value });
+    $("#relay-setup-code").value = "";
+    result.dataset.state = "success";
+    result.textContent = "私有中继已保存，Core 正在后台重启。就绪后点击“生成中继连接码”。";
+    await refreshRelaySetup();
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally { button.disabled = false; }
+});
 
 async function createCoreRelayConnectionCode() {
   const create = $("#core-relay-code-create");

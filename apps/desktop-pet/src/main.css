@@ -172,6 +172,8 @@ button { color: inherit; }
 .setup-steps strong { display: block; color: #564263; font-size: 12px; }
 .setup-command { margin: 0; color: #776a80; font-size: 10px; line-height: 1.65; }
 .setup-guide-card code { padding: 1px 4px; border-radius: 4px; background: #f1ebf4; color: #634b76; word-break: break-word; }
+.setup-form { display: grid; gap: 9px; }
+.setup-form .primary-action, .setup-form .secondary-action { width: fit-content; margin-top: 2px; }
 .voice-model-detail { display: grid; gap: 5px; margin-top: 10px; color: #93859d; font-size: 9px; }
 .voice-model-detail span { display: flex; gap: 8px; align-items: baseline; }
 .voice-model-detail strong { color: #5b4767; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

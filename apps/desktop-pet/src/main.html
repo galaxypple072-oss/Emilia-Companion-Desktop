@@ -216,17 +216,19 @@
               <output id="main-connection-result" class="inline-result" data-state="idle">等待连接码</output>
             </article>
             <article class="content-card setup-guide-card">
-              <div class="section-heading"><div><h2>首次配置指引</h2><p>不需要手填 IP、端口或把密钥发给客户端</p></div></div>
-              <ol class="setup-steps"><li><strong>准备主机</strong><span>在一台 Windows 或 macOS 上运行唯一的 Core；Windows 端由 Host Agent 静默守护。</span></li><li><strong>配置模型</strong><span>仅在 Core 主机设置 API 地址、模型与 Key。Key 只保存在主机的 <code>.env</code>，不会同步到桌宠、日志或聊天记录。</span></li><li><strong>局域网连接</strong><span>主机的“Core 服务”页生成一次性连接码；另一台设备在本页粘贴即可。它十分钟有效且只能用一次。</span></li><li><strong>跨网络连接</strong><span>部署你自己的私有中继并启用 <code>wss://</code>；再由主机生成中继连接码。中继只转发加密数据。</span></li></ol>
+              <div class="section-heading"><div><h2>首次配置</h2><p>依次完成模型、连接方式与设备配对；全程不需要终端。</p></div></div>
+              <ol class="setup-steps"><li><strong>① 配置模型</strong><span>在下方粘贴 API 信息，Core 会安全保存并自动重启。</span></li><li><strong>② 选择连接方式</strong><span>同一 Wi-Fi/LAN 使用 Core 页的“一键连接码”；跨网络则配置自己的私有中继。</span></li><li><strong>③ 添加设备</strong><span>把生成的连接码粘贴到另一台 Emilia Companion，即可完成安全配对。</span></li></ol>
             </article>
             <article class="content-card setup-guide-card" id="agent-setup-card">
               <div class="section-heading"><div><h2>模型 API</h2><p id="agent-setup-detail">正在检查 Core 主机配置</p></div><span id="agent-setup-badge" class="service-badge" data-state="checking">检查中</span></div>
               <div class="service-metrics"><div><span>服务地址</span><strong id="agent-setup-url">—</strong></div><div><span>模型</span><strong id="agent-setup-model">—</strong></div></div>
-              <p class="setup-command">在 Windows Core 主机打开 PowerShell，执行：<code>powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\configure-agent-windows.ps1</code>。脚本从剪贴板读取 Key，完成后自动清空剪贴板，再在 Core 页面点“重新启动”。</p>
+              <form id="agent-setup-form" class="setup-form"><label class="large-field"><span>API 地址</span><input id="agent-setup-base-url" type="url" placeholder="https://api.example.com" autocomplete="url" /></label><label class="large-field"><span>模型名称</span><input id="agent-setup-model-input" type="text" placeholder="你的模型名称" autocomplete="off" /></label><label class="large-field"><span>API Key</span><input id="agent-setup-key" type="password" placeholder="粘贴 API Key" autocomplete="off" /></label><button class="primary-action" type="submit">安全保存并重启 Core</button></form>
+              <output id="agent-setup-result" class="inline-result" data-state="idle">Key 仅通过本机应用交给 Core 保存，不会显示、写入日志或同步到其他设备。</output>
             </article>
             <article class="content-card setup-guide-card">
               <div class="section-heading"><div><h2>私有中继连接</h2><p>只使用你自己部署的中继；不依赖开发者服务器</p></div></div>
-              <p class="setup-command">部署说明见仓库 <code>docs/private-relay.md</code>：配置 DNS 与 TLS 后，把 <code>COMPANION_RELAY_ENABLED=true</code>、中继 <code>wss://</code> 地址和配对码写入 Core 主机的 <code>.env</code>，重启 Core。</p>
+              <p id="relay-setup-detail" class="setup-command">如果你还没有中继服务器，可先只使用局域网连接；跨网络时再部署自己的支持 TLS 的中继。</p>
+              <form id="relay-setup-form" class="setup-form"><label class="large-field"><span>私有中继地址</span><input id="relay-setup-url" type="url" placeholder="wss://relay.example.com/私有路径" autocomplete="url" /></label><label class="large-field"><span>中继配对码</span><input id="relay-setup-code" type="password" placeholder="粘贴 emilia1…" autocomplete="off" /></label><button class="secondary-action" type="submit">保存中继并重启 Core</button></form>
               <div class="service-actions"><button type="button" id="core-relay-code-create" class="secondary-action">生成中继连接码</button><button type="button" id="core-relay-code-copy" class="secondary-action" disabled>复制</button></div>
               <output id="core-relay-code-result" class="inline-result" data-state="idle">只有已启用私有中继的 Core 主机可以生成；连接码不展示中继配对密钥。</output>
             </article>
