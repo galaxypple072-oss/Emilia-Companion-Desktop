@@ -41,14 +41,6 @@ function createRenderer(canvas) {
 export async function createLive2DPet(canvas, { outfit: initialOutfit } = {}) {
   if (!initialOutfit?.model) throw new Error("缺少初始 Live2D 服装");
   const renderScale = Math.min(Math.max(window.devicePixelRatio || 1, 1), 2);
-  const stage = canvas.closest(".pet-stage");
-  const layoutWidth = Math.max(1, Math.round(stage?.clientWidth || 340));
-  const layoutHeight = Math.max(1, Math.round(stage?.clientHeight || 360));
-  // Keep the backing buffer and the transformed CSS surface at the exact
-  // same aspect ratio. The old fixed 600x720 buffer was stretched into a
-  // 680x720 Retina surface, making the character look short and wide.
-  canvas.width = Math.round(layoutWidth * renderScale);
-  canvas.height = Math.round(layoutHeight * renderScale);
   canvas.style.setProperty("--render-scale", String(renderScale));
   canvas.style.width = `${renderScale * 100}%`;
   canvas.style.height = `${renderScale * 100}%`;

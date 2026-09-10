@@ -17,15 +17,6 @@ test("Live2D exposes the renderer's audio-driven lip-sync channel", async () => 
   assert.match(source, /function stopLipSync\(\)/);
 });
 
-test("Live2D backing buffer matches the pet viewport aspect ratio", async () => {
-  const source = await readFile(new URL("../src/live2d-pet.js", import.meta.url), "utf8");
-  assert.match(source, /stage\?\.clientWidth \|\| 340/);
-  assert.match(source, /stage\?\.clientHeight \|\| 360/);
-  assert.match(source, /canvas\.width = Math\.round\(layoutWidth \* renderScale\)/);
-  assert.match(source, /canvas\.height = Math\.round\(layoutHeight \* renderScale\)/);
-  assert.match(source, /keepAspect:\s*false/);
-});
-
 test("runtime errors after readiness do not cover the pet with a fatal card", async () => {
   const source = await readFile(new URL("../src/startup-diagnostics.js", import.meta.url), "utf8");
   assert.match(source, /fatal = !ready/);
