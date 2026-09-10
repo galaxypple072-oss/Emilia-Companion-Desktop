@@ -14,6 +14,7 @@ $voiceRoot = "D:\EmiliaVoice\GPT-SoVITS"
 $logDir = Join-Path $env:LOCALAPPDATA "PersonalCompanion\logs"
 $logPath = Join-Path $logDir "host-agent.log"
 $statePath = Join-Path $env:LOCALAPPDATA "PersonalCompanion\host-state.json"
+$moduleConfigPath = Join-Path $env:LOCALAPPDATA "PersonalCompanion\host-modules.json"
 $napCatPath = "C:\Program Files\NapCatQQ Desktop\NapCatQQ-Desktop.exe"
 $engineLauncher = Join-Path $projectRoot "scripts\windows\start-gpt-sovits-engine.cmd"
 $coreTaskName = "Emilia Core Service"
@@ -54,6 +55,15 @@ function EnsureTask {
   return @{ ok = $true; detail = $state }
 }
 
+function EnsurePortTask {
+  param([string]$Name, [int]$Port)
+  # The voice bridge launcher detaches its Node child, so Task Scheduler marks
+  # its wrapper Ready even while the service is healthy. A task-state-only
+  # check previously restarted it every cooldown interval.
+  if (TestListeningPort $Port) { return @{ ok = $true; detail = "online:$Port" } }
+  return EnsureTask -Name $Name
+}
+
 function GetTaskState {
   param([string]$Name)
   $task = Get-ScheduledTask -TaskName $Name -ErrorAction SilentlyContinue
@@ -62,10 +72,16 @@ function GetTaskState {
 }
 
 function EnsureNapCat {
-  $process = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
-    Where-Object { $_.ExecutablePath -eq $napCatPath } | Select-Object -First 1
+  $process = Get-Process -Name "NapCatQQ-Desktop" -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($null -eq $process) {
-    if (-not (CanStart -Name "napcat")) { return $false }
+    $process = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
+      Where-Object { $_.ExecutablePath -eq $napCatPath } | Select-Object -First 1
+  }
+  if ($null -eq $process) {
+    # A cold NapCat launch can take longer than one agent loop. Keep a longer
+    # cooldown so it is never launched twice just because its process has not
+    # registered yet.
+    if (-not (CanStart -Name "napcat" -CooldownSeconds 300)) { return $false }
     if (Test-Path -LiteralPath $napCatPath) {
       try {
         # NapCat is a desktop application, but minimizing it prevents a logon
@@ -95,6 +111,19 @@ function TestCoreReady {
   return (TestListeningPort 8765) -and (TestListeningPort 8766)
 }
 
+function VoiceModuleEnabled {
+  # Fresh installs do not create voice tasks, so the optional module remains
+  # off until the user installs/enables it. Existing configured installations
+  # retain their working voice stack when first upgraded.
+  if (Test-Path -LiteralPath $moduleConfigPath) {
+    try {
+      $settings = Get-Content -LiteralPath $moduleConfigPath -Raw | ConvertFrom-Json
+      if ($null -ne $settings.voiceEnabled) { return [bool]$settings.voiceEnabled }
+    } catch { WriteAgentLog "WARN" "host module settings could not be read" }
+  }
+  return ($null -ne (Get-ScheduledTask -TaskName "Emilia Voice Service" -ErrorAction SilentlyContinue)) -or (Test-Path -LiteralPath $voiceRoot)
+}
+
 function Get-HostState {
   param([bool]$Repair)
   $napCatRunning = if ($Repair) { EnsureNapCat } else {
@@ -106,14 +135,19 @@ function Get-HostState {
   # removes the logon race where four scheduled tasks all started at once.
   $tasks[$coreTaskName] = if ($Repair) { EnsureTask -Name $coreTaskName } else { GetTaskState -Name $coreTaskName }
   $coreReady = TestCoreReady
+  $voiceEnabled = VoiceModuleEnabled
   foreach ($name in $workerTaskNames) {
+    if (-not $voiceEnabled -and ($name -eq "Emilia Voice Service" -or $name -eq "Emilia Voice Worker")) {
+      $tasks[$name] = @{ ok = $true; detail = "disabled" }
+      continue
+    }
     if ($Repair -and $tasks[$coreTaskName].ok -and -not $coreReady) {
       $tasks[$name] = @{ ok = $true; detail = "waiting-for-core" }
     } else {
-      $tasks[$name] = if ($Repair) { EnsureTask -Name $name } else { GetTaskState -Name $name }
+      $tasks[$name] = if ($Repair -and $name -eq "Emilia Voice Service") { EnsurePortTask -Name $name -Port 9873 } elseif ($Repair) { EnsureTask -Name $name } else { GetTaskState -Name $name }
     }
   }
-  if ($Repair -and ($coreReady -or -not $tasks[$coreTaskName].ok)) { EnsureVoiceEngine }
+  if ($Repair -and $voiceEnabled -and ($coreReady -or -not $tasks[$coreTaskName].ok)) { EnsureVoiceEngine }
   [pscustomobject]@{
     schema = 1
     updatedAt = (Get-Date).ToUniversalTime().ToString("o")
@@ -123,6 +157,7 @@ function Get-HostState {
       onebotWebSocket = TestListeningPort 3001
       coreBridge = TestListeningPort 8765
       coreControl = TestListeningPort 8766
+      voiceEnabled = $voiceEnabled
       voiceEngine = TestListeningPort 9872
       voiceService = TestListeningPort 9873
     }

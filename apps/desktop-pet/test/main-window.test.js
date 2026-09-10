@@ -61,6 +61,17 @@ test("settings guide supports API setup plus LAN and private-relay connection co
   assert.match(rust, /fn core_configure_relay/);
 });
 
+test("voice is an explicitly optional host module", async () => {
+  const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
+  const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
+  const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
+  assert.match(html, /艾米莉亚语音（可选模块）/);
+  assert.match(html, /id=["']voice-module-toggle["']/);
+  assert.match(main, /voice_set_module_enabled/);
+  assert.match(rust, /fn voice_module_status/);
+  assert.match(rust, /fn voice_set_module_enabled/);
+});
+
 test("portrait can be hidden while quick chat and controls remain available", async () => {
   const petHtml = await readFile(new URL("../src/index.html", import.meta.url), "utf8");
   const pet = await readFile(new URL("../src/pet.js", import.meta.url), "utf8");

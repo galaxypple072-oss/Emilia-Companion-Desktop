@@ -161,7 +161,7 @@
               <output id="core-paired-devices-result" class="inline-result" data-state="idle">这里只显示设备名称和连接时间，不显示连接密钥。</output>
             </article>
             <article class="content-card core-service-card voice-service-card">
-              <div class="section-heading"><div><h2>艾米莉亚语音</h2><p id="voice-service-detail">检查本机 GPT-SoVITS 与语音桥接服务</p></div><span id="voice-service-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="section-heading"><div><h2>艾米莉亚语音（可选模块）</h2><p id="voice-service-detail">检查本机 GPT-SoVITS 与语音桥接服务</p></div><span id="voice-service-badge" class="service-badge" data-state="checking">检查中</span></div>
               <div class="service-metrics">
                 <div><span>语音服务</span><strong id="voice-service-process">—</strong></div>
                 <div><span>GPT-SoVITS</span><strong id="voice-service-gradio">—</strong></div>
@@ -169,6 +169,7 @@
               </div>
               <div class="voice-model-detail"><span>GPT <strong id="voice-service-gpt-weight">—</strong></span><span>SoVITS <strong id="voice-service-sovits-weight">—</strong></span></div>
               <div class="service-actions">
+                <button type="button" class="secondary-action" id="voice-module-toggle">启用本地语音</button>
                 <button type="button" class="primary-action" id="voice-service-diagnose">运行诊断与试听</button>
                 <button type="button" class="secondary-action" data-voice-action="boot_stack">启动完整语音栈</button>
                 <button type="button" class="secondary-action" data-voice-action="restart">重启语音服务</button>

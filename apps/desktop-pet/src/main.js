@@ -211,6 +211,7 @@ function escapeHtml(value) {
 }
 
 let coreServiceBusy = false;
+let voiceModuleEnabled = true;
 let coreLanConnectionCode = "";
 let coreRelayConnectionCode = "";
 let pairedDevicesBusy = false;
@@ -558,8 +559,8 @@ function renderVoiceService(status = {}) {
   const running = status.running === true;
   const gradio = status.gradioListening === true;
   const badge = $("#voice-service-badge");
-  badge.dataset.state = supported ? (running && gradio ? "online" : (running ? "error" : "offline")) : "remote";
-  badge.textContent = supported ? (running && gradio ? "就绪" : (running ? "需检查" : "已停止")) : "远端托管";
+  badge.dataset.state = supported ? (!voiceModuleEnabled ? "offline" : (running && gradio ? "online" : (running ? "error" : "offline"))) : "remote";
+  badge.textContent = supported ? (!voiceModuleEnabled ? "未启用" : (running && gradio ? "就绪" : (running ? "需检查" : "已停止"))) : "远端托管";
   $("#voice-service-detail").textContent = status.detail || "尚未取得语音服务状态";
   $("#voice-service-process").textContent = running ? `PID ${status.pid || "—"}` : (status.installed ? "未运行" : "未安装");
   $("#voice-service-gradio").textContent = gradio ? "9872 正常" : "未监听";
@@ -567,18 +568,23 @@ function renderVoiceService(status = {}) {
   $("#voice-service-gpt-weight").textContent = status.gptWeight || "—";
   $("#voice-service-sovits-weight").textContent = status.sovitsWeight || "—";
   if (status.logPath) $("#voice-log-path").textContent = `${status.logPath} · 错误日志：${status.errorLogPath || "—"}`;
-  for (const button of $$('[data-voice-action]')) button.disabled = voiceServiceBusy || !supported || !status.installed;
+  for (const button of $$('[data-voice-action]')) button.disabled = voiceServiceBusy || !voiceModuleEnabled || !supported || !status.installed;
+  $("#voice-service-diagnose").disabled = voiceServiceBusy || !voiceModuleEnabled || !supported || !status.installed;
 }
 
 async function refreshVoiceService() {
   const result = $("#voice-service-result");
   try {
-    const status = await invoke("voice_service_status");
+    const [status, module] = await Promise.all([invoke("voice_service_status"), invoke("voice_module_status")]);
+    voiceModuleEnabled = module.enabled === true;
+    const toggle = $("#voice-module-toggle");
+    toggle.textContent = voiceModuleEnabled ? "关闭本地语音" : "启用本地语音";
+    toggle.disabled = module.supported !== true || voiceServiceBusy;
     renderVoiceService(status);
     result.dataset.state = status.running && status.gradioListening ? "success" : "idle";
-    result.textContent = status.running && status.gradioListening
+    result.textContent = !voiceModuleEnabled ? "本地语音模块未启用；启用后才会启动 GPT-SoVITS。" : (status.running && status.gradioListening
       ? "本机语音链路已就绪；文本回复会先到，语音随后播放"
-      : (status.detail || "语音服务当前不可用");
+      : (status.detail || "语音服务当前不可用"));
     return status;
   } catch (error) {
     $("#voice-service-badge").dataset.state = "error";
@@ -586,6 +592,28 @@ async function refreshVoiceService() {
     result.dataset.state = "error";
     result.textContent = error instanceof Error ? error.message : String(error);
     return null;
+  }
+}
+
+async function toggleVoiceModule() {
+  if (voiceServiceBusy) return;
+  voiceServiceBusy = true;
+  const button = $("#voice-module-toggle");
+  const result = $("#voice-service-result");
+  button.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = voiceModuleEnabled ? "正在关闭本地语音并停止相关进程…" : "正在启用本地语音模块…";
+  try {
+    const module = await invoke("voice_set_module_enabled", { enabled: !voiceModuleEnabled });
+    voiceModuleEnabled = module.enabled === true;
+    result.dataset.state = "success";
+    result.textContent = voiceModuleEnabled ? "本地语音已启用，后台将按需拉起 GPT-SoVITS。" : "本地语音已关闭；聊天和桌宠继续正常工作。";
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally {
+    voiceServiceBusy = false;
+    await refreshVoiceService();
   }
 }
 
@@ -652,6 +680,7 @@ async function refreshVoiceLog() {
 for (const button of $$('[data-voice-action]')) button.addEventListener("click", () => { void controlVoiceService(button.dataset.voiceAction); });
 $("#voice-service-refresh").addEventListener("click", () => { void refreshVoiceService(); });
 $("#voice-service-diagnose").addEventListener("click", () => { void diagnoseVoiceService(); });
+$("#voice-module-toggle").addEventListener("click", () => { void toggleVoiceModule(); });
 $("#voice-log-refresh").addEventListener("click", () => { void refreshVoiceLog(); });
 
 function renderPermissions() {
