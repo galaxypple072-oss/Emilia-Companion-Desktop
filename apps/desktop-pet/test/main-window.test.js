@@ -50,6 +50,8 @@ test("portrait can be hidden while quick chat and controls remain available", as
   assert.match(petHtml, /id=["']portrait-hide["']/);
   assert.match(petHtml, /id=["']app-quit["']/);
   assert.match(petHtml, /id=["']quick-chat-form["']/);
+  assert.match(petHtml, /id=["']mini-drag-handle["']/);
+  assert.match(petHtml, /data-tauri-drag-region/);
   assert.match(petHtml, /class=["']pet-controls["']/);
   assert.match(pet, /set_pet_portrait_hidden/);
   assert.match(pet, /pet_portrait_is_hidden/);

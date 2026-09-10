@@ -820,7 +820,6 @@ img {
 :root[data-portrait-hidden="true"] .pet-stage {
   height: 108px;
   padding: 8px 8px 34px;
-  cursor: default;
 }
 
 :root[data-portrait-hidden="true"] .live2d-canvas,
@@ -837,6 +836,34 @@ img {
 
 :root[data-portrait-hidden="true"] .pet-controls {
   opacity: 1;
+}
+
+.mini-drag-handle {
+  display: none;
+}
+
+:root[data-portrait-hidden="true"] .mini-drag-handle {
+  position: absolute;
+  top: 3px;
+  left: 31px;
+  right: 31px;
+  z-index: 5;
+  display: block;
+  height: 12px;
+  border-radius: 8px;
+  color: rgba(88, 68, 108, .56);
+  cursor: grab;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  line-height: 12px;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+:root[data-portrait-hidden="true"] .mini-drag-handle:active {
+  cursor: grabbing;
 }
 
 .pet-controls button {
