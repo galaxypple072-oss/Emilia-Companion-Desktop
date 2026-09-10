@@ -59,8 +59,8 @@ test("portrait can be hidden while quick chat and controls remain available", as
   assert.match(mainHtml, /id=["']main-quit-app["']/);
   assert.match(main, /quit_application/);
   assert.match(rust, /fn set_pet_portrait_hidden/);
-  assert.match(rust, /resize_at_bottom_right\(&window, 340\.0, 108\.0\)/);
-  assert.match(rust, /compact_dock_inset/);
+  assert.doesNotMatch(rust, /resize_at_bottom_right\(&window, 340\.0, 108\.0\)/);
+  assert.match(rust, /place_at_bottom_right\(&window\)/);
   assert.doesNotMatch(rust, /portrait hidden; chat window retained/);
   assert.match(rust, /fn quit_application/);
 });

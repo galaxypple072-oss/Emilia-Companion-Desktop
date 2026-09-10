@@ -1015,15 +1015,8 @@ fn resize_at_bottom_right(window: &tauri::WebviewWindow, width: f64, height: f64
     let physical_width = (width * scale).round() as i32;
     let physical_height = (height * scale).round() as i32;
     let margin = (12.0 * scale).round() as i32;
-    // macOS reports a transparent always-on-top window's usable area without
-    // reserving enough space for a visible Dock. Keep only the compact chat
-    // strip above it; the full portrait retains its existing position.
-    #[cfg(target_os = "macos")]
-    let compact_dock_inset = if height <= 120.0 { (92.0 * scale).round() as i32 } else { 0 };
-    #[cfg(not(target_os = "macos"))]
-    let compact_dock_inset = 0;
     let x = work_area.position.x + work_area.size.width as i32 - physical_width - margin;
-    let y = work_area.position.y + work_area.size.height as i32 - physical_height - margin - compact_dock_inset;
+    let y = work_area.position.y + work_area.size.height as i32 - physical_height - margin;
 
     window.set_size(LogicalSize::new(width, height))?;
     window.set_position(PhysicalPosition::new(x, y))?;
@@ -1099,11 +1092,9 @@ fn set_pet_portrait_hidden(app: AppHandle, hidden: bool) -> Result<(), String> {
         return Err("桌宠窗口不可用".to_string());
     };
     if hidden {
-        resize_at_bottom_right(&window, 340.0, 108.0).map_err(|error| error.to_string())?;
         window.emit("companion:portrait-visibility", true).map_err(|error| error.to_string())?;
         write_app_log("appearance", "portrait hidden; quick chat retained");
     } else {
-        resize_at_bottom_right(&window, 340.0, 360.0).map_err(|error| error.to_string())?;
         window.show().map_err(|error| error.to_string())?;
         if window.is_minimized().map_err(|error| error.to_string())? {
             window.unminimize().map_err(|error| error.to_string())?;
@@ -1238,13 +1229,8 @@ pub fn run() {
             write_app_log("lifecycle", "desktop client started");
             #[cfg(target_os = "windows")]
             ensure_voice_stack();
-            let handle = app.handle().clone();
             if let Some(window) = app.get_webview_window("pet") {
-                if portrait_is_hidden(&handle) {
-                    resize_at_bottom_right(&window, 340.0, 108.0)?;
-                } else {
-                    place_at_bottom_right(&window)?;
-                }
+                place_at_bottom_right(&window)?;
                 window.show()?;
             }
             Ok(())

@@ -818,8 +818,7 @@ img {
 }
 
 :root[data-portrait-hidden="true"] .pet-stage {
-  height: 108px;
-  padding: 8px 8px 34px;
+  padding: 54px 8px 34px;
 }
 
 :root[data-portrait-hidden="true"] .live2d-canvas,
@@ -830,11 +829,12 @@ img {
 }
 
 :root[data-portrait-hidden="true"] .quick-chat-shell {
-  bottom: 34px;
+  bottom: 126px;
   opacity: .96;
 }
 
 :root[data-portrait-hidden="true"] .pet-controls {
+  bottom: 94px;
   opacity: 1;
 }
 
@@ -843,11 +843,6 @@ img {
 }
 
 :root[data-portrait-hidden="true"] .mini-drag-handle {
-  position: absolute;
-  top: 3px;
-  left: 31px;
-  right: 31px;
-  z-index: 5;
   display: block;
   height: 12px;
   border-radius: 8px;
