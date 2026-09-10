@@ -303,37 +303,6 @@ if (Test-Path -LiteralPath $envPath) {
   }
 }
 
-#[tauri::command]
-fn voice_module_status() -> Result<VoiceModuleStatus, String> {
-    #[cfg(target_os = "windows")]
-    {
-        let path = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_default().join("PersonalCompanion/host-modules.json");
-        let enabled = fs::read_to_string(path).ok().and_then(|text| serde_json::from_str::<serde_json::Value>(&text).ok()).and_then(|value| value["voiceEnabled"].as_bool()).unwrap_or_else(|| PathBuf::from(r"D:\EmiliaVoice\GPT-SoVITS").exists());
-        return Ok(VoiceModuleStatus { supported: true, enabled, detail: if enabled { "本地 GPT-SoVITS 语音模块已启用。".to_string() } else { "本地语音模块未启用；基础聊天与桌宠不受影响。".to_string() } });
-    }
-    #[cfg(not(target_os = "windows"))]
-    Ok(VoiceModuleStatus { supported: false, enabled: false, detail: "本机不托管 Windows 本地语音模块。".to_string() })
-}
-
-#[tauri::command]
-fn voice_set_module_enabled(enabled: bool) -> Result<VoiceModuleStatus, String> {
-    #[cfg(target_os = "windows")]
-    {
-        let directory = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_default().join("PersonalCompanion");
-        fs::create_dir_all(&directory).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
-        fs::write(directory.join("host-modules.json"), format!("{{\"version\":1,\"voiceEnabled\":{enabled}}}\n")).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
-        let action = if enabled {
-            "Enable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Enable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair | Out-Null"
-        } else {
-            "Disable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Disable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Get-NetTCPConnection -LocalPort 9872,9873 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }"
-        };
-        powershell_output(action)?;
-        write_app_log("voice", if enabled { "voice module enabled" } else { "voice module disabled" });
-        return voice_module_status();
-    }
-    #[cfg(not(target_os = "windows"))]
-    { let _ = enabled; Err("这台设备不托管 Windows 本地语音模块".to_string()) }
-}
 $latest = Get-ChildItem 'D:\EmiliaVoice\voice-output' -Filter '*.wav' -ErrorAction SilentlyContinue |
   Sort-Object LastWriteTime -Descending | Select-Object -First 1
 [pscustomobject]@{
@@ -375,6 +344,38 @@ $latest = Get-ChildItem 'D:\EmiliaVoice\voice-output' -Filter '*.wav' -ErrorActi
         last_output: String::new(), log_path: String::new(), error_log_path: String::new(),
         detail: "角色语音目前由托管 Core 的 Windows 设备运行".to_string(),
     })
+}
+
+#[tauri::command]
+fn voice_module_status() -> Result<VoiceModuleStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let path = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_default().join("PersonalCompanion/host-modules.json");
+        let enabled = fs::read_to_string(path).ok().and_then(|text| serde_json::from_str::<serde_json::Value>(&text).ok()).and_then(|value| value["voiceEnabled"].as_bool()).unwrap_or_else(|| PathBuf::from(r"D:\EmiliaVoice\GPT-SoVITS").exists());
+        return Ok(VoiceModuleStatus { supported: true, enabled, detail: if enabled { "本地 GPT-SoVITS 语音模块已启用。".to_string() } else { "本地语音模块未启用；基础聊天与桌宠不受影响。".to_string() } });
+    }
+    #[cfg(not(target_os = "windows"))]
+    Ok(VoiceModuleStatus { supported: false, enabled: false, detail: "本机不托管 Windows 本地语音模块。".to_string() })
+}
+
+#[tauri::command]
+fn voice_set_module_enabled(enabled: bool) -> Result<VoiceModuleStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let directory = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_default().join("PersonalCompanion");
+        fs::create_dir_all(&directory).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
+        fs::write(directory.join("host-modules.json"), format!("{{\"version\":1,\"voiceEnabled\":{enabled}}}\n")).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
+        let action = if enabled {
+            "Enable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Enable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair | Out-Null"
+        } else {
+            "Disable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Disable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Get-NetTCPConnection -LocalPort 9872,9873 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }"
+        };
+        powershell_output(action)?;
+        write_app_log("voice", if enabled { "voice module enabled" } else { "voice module disabled" });
+        return voice_module_status();
+    }
+    #[cfg(not(target_os = "windows"))]
+    { let _ = enabled; Err("这台设备不托管 Windows 本地语音模块".to_string()) }
 }
 
 #[tauri::command]
