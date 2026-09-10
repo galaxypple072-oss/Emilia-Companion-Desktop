@@ -1015,8 +1015,15 @@ fn resize_at_bottom_right(window: &tauri::WebviewWindow, width: f64, height: f64
     let physical_width = (width * scale).round() as i32;
     let physical_height = (height * scale).round() as i32;
     let margin = (12.0 * scale).round() as i32;
+    // macOS reports a transparent always-on-top window's usable area without
+    // reserving enough space for a visible Dock. Keep only the compact chat
+    // strip above it; the full portrait retains its existing position.
+    #[cfg(target_os = "macos")]
+    let compact_dock_inset = if height <= 120.0 { (92.0 * scale).round() as i32 } else { 0 };
+    #[cfg(not(target_os = "macos"))]
+    let compact_dock_inset = 0;
     let x = work_area.position.x + work_area.size.width as i32 - physical_width - margin;
-    let y = work_area.position.y + work_area.size.height as i32 - physical_height - margin;
+    let y = work_area.position.y + work_area.size.height as i32 - physical_height - margin - compact_dock_inset;
 
     window.set_size(LogicalSize::new(width, height))?;
     window.set_position(PhysicalPosition::new(x, y))?;
