@@ -41,7 +41,7 @@ test("Core page manages paired devices without exposing pairing secrets", async 
   assert.match(rust, /fn core_revoke_paired_device/);
 });
 
-test("portrait can be hidden while the main conversation window remains available", async () => {
+test("portrait can be hidden while quick chat and controls remain available", async () => {
   const petHtml = await readFile(new URL("../src/index.html", import.meta.url), "utf8");
   const pet = await readFile(new URL("../src/pet.js", import.meta.url), "utf8");
   const mainHtml = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
@@ -49,12 +49,16 @@ test("portrait can be hidden while the main conversation window remains availabl
   const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
   assert.match(petHtml, /id=["']portrait-hide["']/);
   assert.match(petHtml, /id=["']app-quit["']/);
+  assert.match(petHtml, /id=["']quick-chat-form["']/);
+  assert.match(petHtml, /class=["']pet-controls["']/);
   assert.match(pet, /set_pet_portrait_hidden/);
+  assert.match(pet, /pet_portrait_is_hidden/);
   assert.match(mainHtml, /id=["']main-show-portrait["']/);
   assert.match(mainHtml, /id=["']main-quit-app["']/);
   assert.match(main, /quit_application/);
   assert.match(rust, /fn set_pet_portrait_hidden/);
-  assert.match(rust, /show_main_window\(app\.clone\(\), Some\("chat"\.to_string\(\)\)\)/);
+  assert.match(rust, /resize_at_bottom_right\(&window, 340\.0, 108\.0\)/);
+  assert.doesNotMatch(rust, /portrait hidden; chat window retained/);
   assert.match(rust, /fn quit_application/);
 });
 

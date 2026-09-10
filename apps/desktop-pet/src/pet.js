@@ -102,6 +102,14 @@ const CLIENT_ID_KEY = "emilia.client.id.v1";
 const clientId = localStorage.getItem(CLIENT_ID_KEY) || crypto.randomUUID();
 localStorage.setItem(CLIENT_ID_KEY, clientId);
 const nativeInvoke = window.__TAURI__?.core?.invoke ?? (async () => { throw new Error("设备能力只在桌面客户端中可用"); });
+function applyPortraitVisibility(hidden) {
+  const isHidden = hidden === true;
+  document.documentElement.dataset.portraitHidden = String(isHidden);
+  portraitHide.textContent = isHidden ? "显" : "▣";
+  portraitHide.setAttribute("aria-label", isHidden ? "显示立绘" : "隐藏立绘，仅保留快捷对话和控制栏");
+  portraitHide.title = isHidden ? "显示立绘" : "隐藏立绘，仅保留快捷对话和控制栏";
+}
+void nativeInvoke("pet_portrait_is_hidden").then(applyPortraitVisibility).catch(() => applyPortraitVisibility(false));
 function reportDiagnostic(message) {
   void nativeInvoke("frontend_report_error", { message: `[diagnostic] ${message}` }).catch(() => {});
 }
@@ -471,11 +479,17 @@ wardrobeToggle.addEventListener("click", () => { void openMainWindow("appearance
 wardrobeClose.addEventListener("click", () => setWardrobeExpanded(false));
 portraitHide.addEventListener("click", async () => {
   portraitHide.disabled = true;
-  try { await nativeInvoke("set_pet_portrait_hidden", { hidden: true }); }
+  const hidden = document.documentElement.dataset.portraitHidden !== "true";
+  try {
+    await nativeInvoke("set_pet_portrait_hidden", { hidden });
+    applyPortraitVisibility(hidden);
+  }
   catch (error) { console.warn("[desktop] failed to hide portrait", error); }
   finally { portraitHide.disabled = false; }
 });
 appQuit.addEventListener("click", () => { void nativeInvoke("quit_application"); });
+
+void tauriEvent?.listen?.("companion:portrait-visibility", ({ payload }) => applyPortraitVisibility(payload === true));
 
 settingsToggle.addEventListener("click", () => {
   if (connectionForm.classList.contains("collapsed")) showConnectionWizard();

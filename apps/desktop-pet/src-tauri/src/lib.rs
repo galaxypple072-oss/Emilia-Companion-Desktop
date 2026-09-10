@@ -1092,18 +1092,25 @@ fn set_pet_portrait_hidden(app: AppHandle, hidden: bool) -> Result<(), String> {
         return Err("桌宠窗口不可用".to_string());
     };
     if hidden {
-        window.hide().map_err(|error| error.to_string())?;
-        show_main_window(app.clone(), Some("chat".to_string())).map_err(|error| error.to_string())?;
-        write_app_log("appearance", "portrait hidden; chat window retained");
+        resize_at_bottom_right(&window, 340.0, 108.0).map_err(|error| error.to_string())?;
+        window.emit("companion:portrait-visibility", true).map_err(|error| error.to_string())?;
+        write_app_log("appearance", "portrait hidden; quick chat retained");
     } else {
+        resize_at_bottom_right(&window, 340.0, 360.0).map_err(|error| error.to_string())?;
         window.show().map_err(|error| error.to_string())?;
         if window.is_minimized().map_err(|error| error.to_string())? {
             window.unminimize().map_err(|error| error.to_string())?;
         }
         window.set_focus().map_err(|error| error.to_string())?;
+        window.emit("companion:portrait-visibility", false).map_err(|error| error.to_string())?;
         write_app_log("appearance", "portrait shown");
     }
     Ok(())
+}
+
+#[tauri::command]
+fn pet_portrait_is_hidden(app: AppHandle) -> bool {
+    portrait_is_hidden(&app)
 }
 
 #[tauri::command]
@@ -1185,6 +1192,7 @@ pub fn run() {
             show_main_window,
             hide_main_window,
             set_pet_portrait_hidden,
+            pet_portrait_is_hidden,
             quit_application,
             load_connection_profile,
             save_connection_profile,
@@ -1224,10 +1232,12 @@ pub fn run() {
             #[cfg(target_os = "windows")]
             ensure_voice_stack();
             let handle = app.handle().clone();
-            if portrait_is_hidden(&handle) {
-                show_main_window(handle, Some("chat".to_string()))?;
-            } else if let Some(window) = app.get_webview_window("pet") {
-                place_at_bottom_right(&window)?;
+            if let Some(window) = app.get_webview_window("pet") {
+                if portrait_is_hidden(&handle) {
+                    resize_at_bottom_right(&window, 340.0, 108.0)?;
+                } else {
+                    place_at_bottom_right(&window)?;
+                }
                 window.show()?;
             }
             Ok(())

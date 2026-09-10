@@ -817,6 +817,28 @@ img {
   opacity: 1;
 }
 
+:root[data-portrait-hidden="true"] .pet-stage {
+  height: 108px;
+  padding: 8px 8px 34px;
+  cursor: default;
+}
+
+:root[data-portrait-hidden="true"] .live2d-canvas,
+:root[data-portrait-hidden="true"] .pet-sprite,
+:root[data-portrait-hidden="true"] .speech-bubble,
+:root[data-portrait-hidden="true"] .state-label {
+  display: none !important;
+}
+
+:root[data-portrait-hidden="true"] .quick-chat-shell {
+  bottom: 34px;
+  opacity: .96;
+}
+
+:root[data-portrait-hidden="true"] .pet-controls {
+  opacity: 1;
+}
+
 .pet-controls button {
   min-width: 30px;
   height: 24px;
