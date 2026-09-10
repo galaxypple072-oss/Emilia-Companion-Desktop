@@ -22,9 +22,23 @@ try {
   New-Item -ItemType Directory -Force -Path $logDir | Out-Null
   Set-Location -LiteralPath $projectRoot
   $errorLogPath = Join-Path $logDir "core-service.err.log"
-  $process = Start-Process -FilePath $nodePath -ArgumentList "--experimental-strip-types", $cliPath, "run" -WorkingDirectory $projectRoot -RedirectStandardOutput $logPath -RedirectStandardError $errorLogPath -WindowStyle Hidden -PassThru
-  $process.WaitForExit()
-  exit $process.ExitCode
+  # Task Scheduler only notices a failed task after it has returned.  Keeping
+  # the supervisor alive here avoids the previous one-minute restart gap that
+  # made a cold boot appear to require a manual restart.
+  $attempt = 0
+  while ($true) {
+    $listener = Get-NetTCPConnection -LocalPort 8765 -State Listen -ErrorAction SilentlyContinue |
+      Select-Object -First 1
+    if ($listener) { exit 0 }
+
+    $process = Start-Process -FilePath $nodePath -ArgumentList "--experimental-strip-types", $cliPath, "run" -WorkingDirectory $projectRoot -RedirectStandardOutput $logPath -RedirectStandardError $errorLogPath -WindowStyle Hidden -PassThru
+    $process.WaitForExit()
+    $exitCode = $process.ExitCode
+    $attempt = [Math]::Min($attempt + 1, 6)
+    $delaySeconds = [Math]::Min(5 * [Math]::Pow(2, $attempt - 1), 60)
+    Add-Content -LiteralPath $errorLogPath -Value "$(Get-Date -Format o) [supervisor] Core exited with code $exitCode; retrying in $delaySeconds seconds" -Encoding utf8
+    Start-Sleep -Seconds $delaySeconds
+  }
 } finally {
   if ($created) { $mutex.ReleaseMutex() }
   $mutex.Dispose()

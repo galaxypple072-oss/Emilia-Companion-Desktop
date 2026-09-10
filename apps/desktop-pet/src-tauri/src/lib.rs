@@ -203,28 +203,16 @@ fn powershell_output(script: &str) -> Result<String, String> {
     Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
 }
 
-/// Starts the local voice stack from the desktop client, rather than requiring
-/// a separate terminal ritual. The large model files remain in the configured
-/// voice runtime directory; they are deliberately not duplicated inside the
-/// desktop executable.
+/// Ask the Host Agent to repair the local stack.  The desktop client must not
+/// start its own engine process: doing so races the background supervisor and
+/// used to leave several orphaned command windows after logon.
 #[cfg(target_os = "windows")]
 fn ensure_voice_stack() {
     if std::env::var("EMILIA_VOICE_AUTOSTART").ok().as_deref() == Some("false") {
         return;
     }
-    let script = r#"
-$voiceReady = [bool](Get-NetTCPConnection -LocalPort 9873 -State Listen -ErrorAction SilentlyContinue)
-if (-not $voiceReady) { Start-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue }
-$engineReady = [bool](Get-NetTCPConnection -LocalPort 9872 -State Listen -ErrorAction SilentlyContinue)
-$root = 'D:\EmiliaVoice\GPT-SoVITS'
-$launcher = "$root\companion-voice-service\start-gpt-sovits-engine.cmd"
-if (-not $engineReady -and (Test-Path $launcher)) {
-  Start-Process -FilePath 'cmd.exe' -ArgumentList '/d','/c',$launcher -WorkingDirectory $root -WindowStyle Hidden
-} elseif (-not $engineReady) {
-  $python = if (Test-Path "$root\.venv\Scripts\python.exe") { "$root\.venv\Scripts\python.exe" } else { '' }
-  if ($python) { Start-Process -FilePath $python -ArgumentList 'webui.py','zh_CN' -WorkingDirectory $root -WindowStyle Hidden }
-}
-"#;
+    let script = r#"$launcher = 'C:\Users\zhyje\personal-companion\scripts\windows\start-host-agent.ps1'
+if (Test-Path -LiteralPath $launcher) { & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $launcher -Mode repair | Out-Null }"#;
     let _ = powershell_output(script);
     write_app_log("voice", "voice stack auto-start requested");
 }
@@ -314,12 +302,12 @@ fn voice_service_control(action: String) -> Result<VoiceServiceStatus, String> {
     #[cfg(target_os = "windows")]
     {
         let operation = match action.as_str() {
-            "start" => "Start-ScheduledTask -TaskName 'Emilia Voice Service'",
+            "start" => "& 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
             "stop" => "Stop-ScheduledTask -TaskName 'Emilia Voice Service'",
-            "restart" => "Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; Start-ScheduledTask -TaskName 'Emilia Voice Service'",
+            "restart" => "Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
             // The inference UI and bridge are one user-facing "voice stack".
             // The client launches both from the local runtime when needed.
-            "boot_stack" => "Start-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; $root = 'D:\\EmiliaVoice\\GPT-SoVITS'; $launcher = \"$root\\companion-voice-service\\start-gpt-sovits-engine.cmd\"; if (-not (Get-NetTCPConnection -LocalPort 9872 -State Listen -ErrorAction SilentlyContinue) -and (Test-Path $launcher)) { Start-Process -FilePath 'cmd.exe' -ArgumentList '/d','/c',$launcher -WorkingDirectory $root -WindowStyle Hidden }",
+            "boot_stack" => "& 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
             _ => unreachable!(),
         };
         powershell_output(&format!("[Console]::OutputEncoding = [Text.Encoding]::UTF8; {operation}"))?;
@@ -473,9 +461,9 @@ fn core_service_control(action: String) -> Result<CoreServiceStatus, String> {
     #[cfg(target_os = "windows")]
     {
         let operation = match action.as_str() {
-            "start" => "Start-ScheduledTask -TaskName 'Emilia Core Service'",
+            "start" => "& 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
             "stop" => "Stop-ScheduledTask -TaskName 'Emilia Core Service'",
-            "restart" => "Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 600; Start-ScheduledTask -TaskName 'Emilia Core Service'",
+            "restart" => "Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 600; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
             _ => unreachable!(),
         };
         let script = format!("[Console]::OutputEncoding = [Text.Encoding]::UTF8; {operation}");

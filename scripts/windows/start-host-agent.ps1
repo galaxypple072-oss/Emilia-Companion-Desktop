@@ -16,7 +16,8 @@ $logPath = Join-Path $logDir "host-agent.log"
 $statePath = Join-Path $env:LOCALAPPDATA "PersonalCompanion\host-state.json"
 $napCatPath = "C:\Program Files\NapCatQQ Desktop\NapCatQQ-Desktop.exe"
 $engineLauncher = Join-Path $projectRoot "scripts\windows\start-gpt-sovits-engine.cmd"
-$taskNames = @("Emilia Core Service", "Emilia Voice Service", "Emilia Voice Worker", "Emilia QQ Worker")
+$coreTaskName = "Emilia Core Service"
+$workerTaskNames = @("Emilia Voice Service", "Emilia Voice Worker", "Emilia QQ Worker")
 $lastStart = @{}
 
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
@@ -90,14 +91,29 @@ function EnsureVoiceEngine {
   } catch { $null = $_ }
 }
 
+function TestCoreReady {
+  return (TestListeningPort 8765) -and (TestListeningPort 8766)
+}
+
 function Get-HostState {
   param([bool]$Repair)
   $napCatRunning = if ($Repair) { EnsureNapCat } else {
     $null -ne (Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.ExecutablePath -eq $napCatPath } | Select-Object -First 1)
   }
   $tasks = @{}
-  foreach ($name in $taskNames) { $tasks[$name] = if ($Repair) { EnsureTask -Name $name } else { GetTaskState -Name $name } }
-  if ($Repair) { EnsureVoiceEngine }
+  # Core is the only required process in an all-in-one host.  It must reach
+  # both local endpoints before optional workers are asked to connect.  This
+  # removes the logon race where four scheduled tasks all started at once.
+  $tasks[$coreTaskName] = if ($Repair) { EnsureTask -Name $coreTaskName } else { GetTaskState -Name $coreTaskName }
+  $coreReady = TestCoreReady
+  foreach ($name in $workerTaskNames) {
+    if ($Repair -and $tasks[$coreTaskName].ok -and -not $coreReady) {
+      $tasks[$name] = @{ ok = $true; detail = "waiting-for-core" }
+    } else {
+      $tasks[$name] = if ($Repair) { EnsureTask -Name $name } else { GetTaskState -Name $name }
+    }
+  }
+  if ($Repair -and ($coreReady -or -not $tasks[$coreTaskName].ok)) { EnsureVoiceEngine }
   [pscustomobject]@{
     schema = 1
     updatedAt = (Get-Date).ToUniversalTime().ToString("o")
