@@ -31,11 +31,13 @@ export function parseDotEnv(contents: string): Record<string, string> {
 }
 
 export function loadDotEnv(path: string): void {
-  if (!existsSync(path)) {
+  const configuredPath = process.env.EMILIA_ENV_PATH?.trim();
+  const resolvedPath = configuredPath || path;
+  if (!existsSync(resolvedPath)) {
     return;
   }
 
-  const values = parseDotEnv(readFileSync(path, "utf8"));
+  const values = parseDotEnv(readFileSync(resolvedPath, "utf8"));
   for (const [key, value] of Object.entries(values)) {
     if (process.env[key] === undefined) {
       process.env[key] = value;

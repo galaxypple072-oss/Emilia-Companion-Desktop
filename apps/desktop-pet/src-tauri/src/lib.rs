@@ -83,6 +83,17 @@ struct AgentSetupStatus {
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
+struct RoleplaySetupStatus {
+    supported: bool,
+    enabled: bool,
+    configured: bool,
+    base_url: String,
+    model: String,
+    detail: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct RelaySetupStatus {
     supported: bool,
     enabled: bool,
@@ -92,7 +103,44 @@ struct RelaySetupStatus {
 }
 
 fn companion_env_path() -> PathBuf {
-    PathBuf::from(r"C:\Users\zhyje\personal-companion\.env")
+    std::env::var_os("LOCALAPPDATA")
+        .map(PathBuf::from)
+        .unwrap_or_default()
+        .join("PersonalCompanion/.env")
+}
+
+#[cfg(target_os = "windows")]
+fn companion_runtime_root() -> PathBuf {
+    if let Some(configured) = std::env::var_os("EMILIA_RUNTIME_ROOT") {
+        let path = PathBuf::from(configured);
+        if path.join("apps/product-core/src/cli.ts").is_file() { return path; }
+    }
+    if let Ok(executable) = std::env::current_exe() {
+        if let Some(directory) = executable.parent() {
+            let installed = directory.join("core-runtime");
+            if installed.join("apps/product-core/src/cli.ts").is_file() { return installed; }
+        }
+    }
+    let legacy = PathBuf::from(r"C:\Users\zhyje\personal-companion");
+    if legacy.join("apps/product-core/src/cli.ts").is_file() { return legacy; }
+    std::env::current_dir().unwrap_or_default()
+}
+
+#[cfg(target_os = "windows")]
+fn core_node_path(root: &Path) -> PathBuf {
+    let bundled = root.join("node/node.exe");
+    if bundled.is_file() { bundled } else { PathBuf::from(r"C:\Program Files\nodejs\node.exe") }
+}
+
+#[cfg(target_os = "windows")]
+fn ps_quote(path: &Path) -> String {
+    format!("'{}'", path.to_string_lossy().replace('\'', "''"))
+}
+
+#[cfg(target_os = "windows")]
+fn host_agent_repair_command() -> String {
+    let launcher = companion_runtime_root().join("scripts/windows/start-host-agent.ps1");
+    format!("& {} -Mode repair | Out-Null", ps_quote(&launcher))
 }
 
 fn update_companion_env(entries: &[(&str, String)]) -> Result<(), String> {
@@ -109,7 +157,7 @@ fn update_companion_env(entries: &[(&str, String)]) -> Result<(), String> {
 
 #[cfg(target_os = "windows")]
 fn restart_local_core_after_configuration() -> Result<(), String> {
-    powershell_output("Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair | Out-Null")?;
+    powershell_output(&format!("Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; {}", host_agent_repair_command()))?;
     write_app_log("core", "configuration saved; Core restart requested");
     Ok(())
 }
@@ -262,9 +310,9 @@ fn ensure_voice_stack() {
     if std::env::var("EMILIA_VOICE_AUTOSTART").ok().as_deref() == Some("false") {
         return;
     }
-    let script = r#"$launcher = 'C:\Users\zhyje\personal-companion\scripts\windows\start-host-agent.ps1'
-if (Test-Path -LiteralPath $launcher) { & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $launcher -Mode repair | Out-Null }"#;
-    let _ = powershell_output(script);
+    let launcher = companion_runtime_root().join("scripts/windows/start-host-agent.ps1");
+    let script = format!("$launcher = {}; if (Test-Path -LiteralPath $launcher) {{ & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $launcher -Mode repair | Out-Null }}", ps_quote(&launcher));
+    let _ = powershell_output(&script);
     write_app_log("voice", "voice stack auto-start requested");
 }
 
@@ -366,11 +414,12 @@ fn voice_set_module_enabled(enabled: bool) -> Result<VoiceModuleStatus, String> 
         fs::create_dir_all(&directory).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
         fs::write(directory.join("host-modules.json"), format!("{{\"version\":1,\"voiceEnabled\":{enabled}}}\n")).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
         let action = if enabled {
-            "Enable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Enable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair | Out-Null"
+            "Enable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Enable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue"
         } else {
             "Disable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Disable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Get-NetTCPConnection -LocalPort 9872,9873 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }"
         };
-        powershell_output(action)?;
+        let command = if enabled { format!("{action}; {}", host_agent_repair_command()) } else { action.to_string() };
+        powershell_output(&command)?;
         write_app_log("voice", if enabled { "voice module enabled" } else { "voice module disabled" });
         return voice_module_status();
     }
@@ -386,12 +435,12 @@ fn voice_service_control(action: String) -> Result<VoiceServiceStatus, String> {
     #[cfg(target_os = "windows")]
     {
         let operation = match action.as_str() {
-            "start" => "& 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
-            "stop" => "Stop-ScheduledTask -TaskName 'Emilia Voice Service'",
-            "restart" => "Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
+            "start" => host_agent_repair_command(),
+            "stop" => "Stop-ScheduledTask -TaskName 'Emilia Voice Service'".to_string(),
+            "restart" => format!("Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 700; {}", host_agent_repair_command()),
             // The inference UI and bridge are one user-facing "voice stack".
             // The client launches both from the local runtime when needed.
-            "boot_stack" => "& 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
+            "boot_stack" => host_agent_repair_command(),
             _ => unreachable!(),
         };
         powershell_output(&format!("[Console]::OutputEncoding = [Text.Encoding]::UTF8; {operation}"))?;
@@ -496,7 +545,7 @@ fn core_service_status() -> Result<CoreServiceStatus, String> {
         let script = r#"[Console]::OutputEncoding = [Text.Encoding]::UTF8
 $task = Get-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue
 $process = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
-  $_.Name -eq 'node.exe' -and $_.CommandLine -like '*personal-companion*product-core*cli.ts*run*'
+  $_.Name -eq 'node.exe' -and $_.CommandLine -like '*product-core*cli.ts*run*'
 } | Select-Object -First 1
 $bridge = [bool](Get-NetTCPConnection -LocalPort 8765 -State Listen -ErrorAction SilentlyContinue)
 $control = [bool](Get-NetTCPConnection -LocalPort 8766 -State Listen -ErrorAction SilentlyContinue)
@@ -545,9 +594,9 @@ fn core_service_control(action: String) -> Result<CoreServiceStatus, String> {
     #[cfg(target_os = "windows")]
     {
         let operation = match action.as_str() {
-            "start" => "& 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
-            "stop" => "Stop-ScheduledTask -TaskName 'Emilia Core Service'",
-            "restart" => "Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 600; & 'C:\\Users\\zhyje\\personal-companion\\scripts\\windows\\start-host-agent.ps1' -Mode repair",
+            "start" => host_agent_repair_command(),
+            "stop" => "Stop-ScheduledTask -TaskName 'Emilia Core Service'".to_string(),
+            "restart" => format!("Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 600; {}", host_agent_repair_command()),
             _ => unreachable!(),
         };
         let script = format!("[Console]::OutputEncoding = [Text.Encoding]::UTF8; {operation}");
@@ -575,14 +624,16 @@ $address = Get-NetIPAddress -AddressFamily IPv4 -InterfaceIndex $route.Interface
 if (-not $address) { throw 'No LAN IPv4 address was found' }
 $address"#)?;
         let ip = ip.trim();
-        let node = PathBuf::from(r"C:\Program Files\nodejs\node.exe");
-        let cli = PathBuf::from(r"C:\Users\zhyje\personal-companion\apps\product-core\src\cli.ts");
+        let root = companion_runtime_root();
+        let node = core_node_path(&root);
+        let cli = root.join("apps/product-core/src/cli.ts");
         if !node.is_file() || !cli.is_file() { return Err("Core connection-code tool is unavailable".to_string()); }
         use std::os::windows::process::CommandExt;
         const CREATE_NO_WINDOW: u32 = 0x08000000;
         let output = Command::new(node)
             .args(["--experimental-strip-types", cli.to_string_lossy().as_ref(), "connection-code", "--url", &format!("ws://{ip}:8765")])
-            .current_dir(r"C:\Users\zhyje\personal-companion")
+            .current_dir(&root)
+            .env("EMILIA_ENV_PATH", companion_env_path())
             .creation_flags(CREATE_NO_WINDOW)
             .output()
             .map_err(|error| format!("无法生成连接码：{error}"))?;
@@ -607,14 +658,16 @@ fn core_create_relay_connection_code() -> Result<String, String> {
         if !core_service_status()?.running {
             return Err("Core 尚未启动，无法生成中继连接码".to_string());
         }
-        let node = PathBuf::from(r"C:\Program Files\nodejs\node.exe");
-        let cli = PathBuf::from(r"C:\Users\zhyje\personal-companion\apps\product-core\src\cli.ts");
+        let root = companion_runtime_root();
+        let node = core_node_path(&root);
+        let cli = root.join("apps/product-core/src/cli.ts");
         if !node.is_file() || !cli.is_file() { return Err("Core connection-code tool is unavailable".to_string()); }
         use std::os::windows::process::CommandExt;
         const CREATE_NO_WINDOW: u32 = 0x08000000;
         let output = Command::new(node)
             .args(["--experimental-strip-types", cli.to_string_lossy().as_ref(), "relay-connection-code"])
-            .current_dir(r"C:\Users\zhyje\personal-companion")
+            .current_dir(&root)
+            .env("EMILIA_ENV_PATH", companion_env_path())
             .creation_flags(CREATE_NO_WINDOW)
             .output()
             .map_err(|error| format!("无法生成中继连接码：{error}"))?;
@@ -669,6 +722,50 @@ fn core_configure_agent(base_url: String, model: String, api_key: String) -> Res
 }
 
 #[tauri::command]
+fn core_roleplay_setup_status() -> Result<RoleplaySetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let text = fs::read_to_string(companion_env_path()).unwrap_or_default();
+        let value = |key: &str| text.lines().find_map(|line| line.strip_prefix(&format!("{key}=")).map(str::trim)).unwrap_or("").trim_matches('"').to_string();
+        let enabled = matches!(value("ROLEPLAY_ENABLED").to_ascii_lowercase().as_str(), "1" | "true" | "yes" | "on");
+        let base_url = value("ROLEPLAY_BASE_URL");
+        let model = value("ROLEPLAY_MODEL");
+        let configured = !value("ROLEPLAY_API_KEY").is_empty() && !base_url.is_empty() && !model.is_empty();
+        let detail = if enabled && configured {
+            "Qwen Character 已启用：闲聊、倾诉和情绪对话会交给它；工具任务仍由 DeepSeek Harness 负责。".to_string()
+        } else if configured {
+            "Qwen Character 已保存，但目前未启用。开启后它只处理闲聊与情绪对话，不拥有工具权限。".to_string()
+        } else {
+            "尚未配置 Qwen Character。配置后可恢复双模型分工；它不会获得文件、邮件或设备权限。".to_string()
+        };
+        return Ok(RoleplaySetupStatus { supported: true, enabled, configured, base_url, model, detail });
+    }
+    #[cfg(not(target_os = "windows"))]
+    Ok(RoleplaySetupStatus { supported: false, enabled: false, configured: false, base_url: String::new(), model: String::new(), detail: "请在托管 Core 的 Windows 设备上配置 Qwen Character。".to_string() })
+}
+
+#[tauri::command]
+fn core_configure_roleplay(base_url: String, model: String, api_key: String, enabled: bool) -> Result<RoleplaySetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let url = url::Url::parse(base_url.trim()).map_err(|_| "Qwen API 地址格式不正确".to_string())?;
+        if !["http", "https"].contains(&url.scheme()) || !url.username().is_empty() || url.password().is_some() { return Err("Qwen API 地址只能是普通的 http(s) 地址，不能包含账号或密码".to_string()); }
+        let model = model.trim();
+        if model.is_empty() || model.len() > 120 { return Err("请填写有效的 Qwen 模型名称".to_string()); }
+        let api_key = api_key.trim();
+        if api_key.len() < 8 || api_key.len() > 512 || !api_key.bytes().all(|byte| byte.is_ascii_graphic()) { return Err("请粘贴有效的 Qwen API Key（不含空格）".to_string()); }
+        update_companion_env(&[
+            ("ROLEPLAY_ENABLED", enabled.to_string()), ("ROLEPLAY_BASE_URL", url.to_string()), ("ROLEPLAY_API_KEY", api_key.to_string()), ("ROLEPLAY_MODEL", model.to_string()),
+            ("ROLEPLAY_MAX_TOKENS", "500".to_string()), ("ROLEPLAY_TEMPERATURE", "0.85".to_string()), ("ROLEPLAY_TIMEOUT_MS", "60000".to_string()), ("ROLEPLAY_CONTEXT_MESSAGES", "20".to_string()),
+        ])?;
+        restart_local_core_after_configuration()?;
+        return core_roleplay_setup_status();
+    }
+    #[cfg(not(target_os = "windows"))]
+    { let _ = (base_url, model, api_key, enabled); Err("请在托管 Core 的 Windows 设备上配置 Qwen Character".to_string()) }
+}
+
+#[tauri::command]
 fn core_relay_setup_status() -> Result<RelaySetupStatus, String> {
     #[cfg(target_os = "windows")]
     {
@@ -705,8 +802,9 @@ fn run_core_pairing_cli(arguments: &[&str]) -> Result<serde_json::Value, String>
         if !core_service_status()?.control_listening {
             return Err("Core 尚未就绪，无法读取设备配对信息".to_string());
         }
-        let node = PathBuf::from(r"C:\Program Files\nodejs\node.exe");
-        let cli = PathBuf::from(r"C:\Users\zhyje\personal-companion\apps\product-core\src\cli.ts");
+        let root = companion_runtime_root();
+        let node = core_node_path(&root);
+        let cli = root.join("apps/product-core/src/cli.ts");
         if !node.is_file() || !cli.is_file() { return Err("Core 配对管理工具不可用".to_string()); }
         use std::os::windows::process::CommandExt;
         const CREATE_NO_WINDOW: u32 = 0x08000000;
@@ -714,7 +812,8 @@ fn run_core_pairing_cli(arguments: &[&str]) -> Result<serde_json::Value, String>
             .arg("--experimental-strip-types")
             .arg(cli)
             .args(arguments)
-            .current_dir(r"C:\Users\zhyje\personal-companion")
+            .current_dir(&root)
+            .env("EMILIA_ENV_PATH", companion_env_path())
             .creation_flags(CREATE_NO_WINDOW)
             .output()
             .map_err(|error| format!("无法读取 Core 配对信息：{error}"))?;
@@ -1254,7 +1353,7 @@ fn save_quit_behavior(app: AppHandle, behavior: String) -> Result<String, String
 }
 #[cfg(target_os = "windows")]
 fn stop_local_background_services() {
-    let _ = powershell_output(r#"Stop-ScheduledTask -TaskName 'Emilia Host Agent' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia QQ Worker' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*start-host-agent.ps1*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Get-Process -Name 'NapCatQQ-Desktop' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"#);
+    let _ = powershell_output(r#"Stop-ScheduledTask -TaskName 'Emilia Host Agent' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Core Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia QQ Worker' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Stop-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue; Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*start-host-agent.ps1*' -or $_.CommandLine -like '*start-core-service.ps1*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Get-Process -Name 'NapCatQQ-Desktop' -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"#);
 }
 
 fn portrait_is_hidden(app: &AppHandle) -> bool {
@@ -1397,6 +1496,8 @@ pub fn run() {
             core_create_relay_connection_code,
             core_agent_setup_status,
             core_configure_agent,
+            core_roleplay_setup_status,
+            core_configure_roleplay,
             core_relay_setup_status,
             core_configure_relay,
             core_list_paired_devices,

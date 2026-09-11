@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 
 # The Host Agent is the only logon task. It supervises the existing on-demand
 # service tasks, writes one redacted state file, and never opens a terminal.
-$projectRoot = "C:\Users\zhyje\personal-companion"
+$projectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $voiceRoot = "D:\EmiliaVoice\GPT-SoVITS"
 $logDir = Join-Path $env:LOCALAPPDATA "PersonalCompanion\logs"
 $logPath = Join-Path $logDir "host-agent.log"

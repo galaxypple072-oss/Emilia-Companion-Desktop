@@ -19,6 +19,28 @@ test("desktop app declares separate pet, main, and device-agent windows", async 
   assert.ok(capability.windows.includes("agent"));
 });
 
+test("Windows installer bundles and installs a portable Product Core", async () => {
+  const config = JSON.parse(await readFile(new URL("../src-tauri/tauri.windows.conf.json", import.meta.url), "utf8"));
+  const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
+  const coreLauncher = await readFile(new URL("../../../scripts/windows/start-core-service.ps1", import.meta.url), "utf8");
+  const installer = await readFile(new URL("../../../scripts/install-bundled-core-windows.ps1", import.meta.url), "utf8");
+  assert.deepEqual(config.bundle.targets, ["nsis"]);
+  assert.equal(config.bundle.resources["../../../.build/r3/"], "core-runtime/");
+  assert.match(config.bundle.windows.nsis.installerHooks, /hooks\.nsh$/);
+  assert.match(rust, /directory\.join\("core-runtime"\)/);
+  assert.doesNotMatch(rust, /C:\\Users\\zhyje\\personal-companion\\scripts/);
+  assert.match(coreLauncher, /node\\node\.exe/);
+  assert.match(coreLauncher, /EMILIA_ENV_PATH/);
+  assert.match(installer, /COMPANION_BRIDGE_ENABLED=true/);
+  assert.match(installer, /install-core-task-windows\.ps1/);
+  assert.match(installer, /install-host-agent-task-windows\.ps1/);
+});
+
+test("macOS client ships as a DMG", async () => {
+  const config = JSON.parse(await readFile(new URL("../src-tauri/tauri.conf.json", import.meta.url), "utf8"));
+  assert.deepEqual(config.bundle.targets, ["dmg"]);
+});
+
 test("main window exposes every planned control-center section", async () => {
   const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
   for (const page of ["chat", "tasks", "files", "devices", "core", "memory", "proactive", "appearance", "settings"]) {
@@ -41,23 +63,27 @@ test("Core page manages paired devices without exposing pairing secrets", async 
   assert.match(rust, /fn core_revoke_paired_device/);
 });
 
-test("settings guide supports API setup plus LAN and private-relay connection codes", async () => {
+test("settings guide supports both model APIs plus LAN and private-relay connection codes", async () => {
   const html = await readFile(new URL("../src/main.html", import.meta.url), "utf8");
   const main = await readFile(new URL("../src/main.js", import.meta.url), "utf8");
   const rust = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
   assert.match(html, /首次配置/);
   assert.match(html, /id=["']agent-setup-card["']/);
   assert.match(html, /id=["']agent-setup-form["']/);
+  assert.match(html, /id=["']roleplay-setup-form["']/);
   assert.match(html, /id=["']relay-setup-form["']/);
   assert.match(html, /id=["']core-relay-code-create["']/);
   assert.doesNotMatch(html, /configure-agent-windows\.ps1/);
   assert.match(main, /invitation\.mode === "relay"/);
   assert.match(main, /core_configure_agent/);
+  assert.match(main, /core_configure_roleplay/);
   assert.match(main, /core_configure_relay/);
   assert.match(main, /core_create_relay_connection_code/);
   assert.match(rust, /fn core_create_relay_connection_code/);
   assert.match(rust, /fn core_agent_setup_status/);
   assert.match(rust, /fn core_configure_agent/);
+  assert.match(rust, /fn core_roleplay_setup_status/);
+  assert.match(rust, /fn core_configure_roleplay/);
   assert.match(rust, /fn core_configure_relay/);
 });
 

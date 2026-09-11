@@ -1,0 +1,17 @@
+{
+  "build": {
+    "beforeBuildCommand": "npm run build"
+  },
+  "bundle": {
+    "targets": ["nsis"],
+    "resources": {
+      "../../../.build/r3/": "core-runtime/"
+    },
+    "windows": {
+      "nsis": {
+        "installerHooks": "./windows/hooks.nsh",
+        "installMode": "currentUser"
+      }
+    }
+  }
+}

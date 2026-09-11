@@ -11,6 +11,8 @@ infra/napcat/data/
 # GitHub's file-size limits. Release binaries belong in GitHub Releases.
 **/target/
 apps/desktop-pet/bin/
+apps/desktop-pet/src-tauri/runtime/
+.build/
 .dsh/
 # This is an operator handoff containing local machine topology; keep it local.
 HANDOFF-*.md

@@ -1,12 +1,14 @@
 {
   "name": "@personal-companion/desktop-pet",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "vite build",
     "dev": "vite",
     "test": "node --test test/*.test.js",
+    "bundle:mac": "cd src-tauri && ../node_modules/.bin/tauri build --ci",
+    "bundle:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File ../../scripts/prepare-windows-core-runtime.ps1 && cd src-tauri && ..\\node_modules\\.bin\\tauri.cmd build --ci",
     "tauri": "tauri"
   },
   "dependencies": {

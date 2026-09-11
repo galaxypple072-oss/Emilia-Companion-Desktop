@@ -173,6 +173,8 @@ button { color: inherit; }
 .setup-command { margin: 0; color: #776a80; font-size: 10px; line-height: 1.65; }
 .setup-guide-card code { padding: 1px 4px; border-radius: 4px; background: #f1ebf4; color: #634b76; word-break: break-word; }
 .setup-form { display: grid; gap: 9px; }
+.toggle-row { display: flex; align-items: center; gap: 8px; color: #64546e; font-size: 11px; font-weight: 700; cursor: pointer; }
+.toggle-row input { width: 15px; height: 15px; accent-color: #79529a; }
 .setup-form .primary-action, .setup-form .secondary-action { width: fit-content; margin-top: 2px; }
 .voice-model-detail { display: grid; gap: 5px; margin-top: 10px; color: #93859d; font-size: 9px; }
 .voice-model-detail span { display: flex; gap: 8px; align-items: baseline; }

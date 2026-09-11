@@ -219,13 +219,19 @@
             <article class="content-card setup-guide-card"><div class="section-heading"><div><h2>关闭桌宠时</h2><p>决定立绘叉叉和“退出程序”是否同时停止本机后台服务</p></div></div><label class="large-field"><span>退出行为</span><select id="quit-behavior-select"><option value="desktop-only">仅关闭桌宠（Core / QQ 在后台继续运行）</option><option value="stop-background">关闭桌宠并停止本机 Core、QQ 和语音</option></select></label><output id="quit-behavior-result" class="inline-result" data-state="idle">正在读取退出偏好</output></article>
             <article class="content-card setup-guide-card">
               <div class="section-heading"><div><h2>首次配置</h2><p>依次完成模型、连接方式与设备配对；全程不需要终端。</p></div></div>
-              <ol class="setup-steps"><li><strong>① 配置模型</strong><span>在下方粘贴 API 信息，Core 会安全保存并自动重启。</span></li><li><strong>② 选择连接方式</strong><span>同一 Wi-Fi/LAN 使用 Core 页的“一键连接码”；跨网络则配置自己的私有中继。</span></li><li><strong>③ 添加设备</strong><span>把生成的连接码粘贴到另一台 Emilia Companion，即可完成安全配对。</span></li></ol>
+              <ol class="setup-steps"><li><strong>① 配置 DeepSeek 主 Agent</strong><span>它经 Harness 调用 MCP，负责工具任务与事实问答。</span></li><li><strong>② 配置 Qwen Character</strong><span>它负责闲聊、倾诉与情绪回应，没有工具权限。</span></li><li><strong>③ 选择连接方式并添加设备</strong><span>同一 Wi-Fi/LAN 使用 Core 页的“一键连接码”；跨网络则配置自己的私有中继。</span></li></ol>
             </article>
             <article class="content-card setup-guide-card" id="agent-setup-card">
-              <div class="section-heading"><div><h2>模型 API</h2><p id="agent-setup-detail">正在检查 Core 主机配置</p></div><span id="agent-setup-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="section-heading"><div><h2>DeepSeek 主 Agent（Harness + MCP）</h2><p id="agent-setup-detail">正在检查 Core 主机配置</p></div><span id="agent-setup-badge" class="service-badge" data-state="checking">检查中</span></div>
               <div class="service-metrics"><div><span>服务地址</span><strong id="agent-setup-url">—</strong></div><div><span>模型</span><strong id="agent-setup-model">—</strong></div></div>
               <form id="agent-setup-form" class="setup-form"><label class="large-field"><span>API 地址</span><input id="agent-setup-base-url" type="url" placeholder="https://api.example.com" autocomplete="url" /></label><label class="large-field"><span>模型名称</span><input id="agent-setup-model-input" type="text" placeholder="你的模型名称" autocomplete="off" /></label><label class="large-field"><span>API Key</span><input id="agent-setup-key" type="password" placeholder="粘贴 API Key" autocomplete="off" /></label><button class="primary-action" type="submit">安全保存并重启 Core</button></form>
               <output id="agent-setup-result" class="inline-result" data-state="idle">Key 仅通过本机应用交给 Core 保存，不会显示、写入日志或同步到其他设备。</output>
+            </article>
+            <article class="content-card setup-guide-card" id="roleplay-setup-card">
+              <div class="section-heading"><div><h2>Qwen Character（聊天与情绪）</h2><p id="roleplay-setup-detail">正在检查角色模型配置</p></div><span id="roleplay-setup-badge" class="service-badge" data-state="checking">检查中</span></div>
+              <div class="service-metrics"><div><span>服务地址</span><strong id="roleplay-setup-url">—</strong></div><div><span>模型</span><strong id="roleplay-setup-model">—</strong></div></div>
+              <form id="roleplay-setup-form" class="setup-form"><label class="large-field"><span>Qwen API 地址</span><input id="roleplay-setup-base-url" type="url" value="https://dashscope.aliyuncs.com/compatible-mode/v1" autocomplete="url" /></label><label class="large-field"><span>Qwen 模型名称</span><input id="roleplay-setup-model-input" type="text" value="qwen-flash-character-2026-02-26" autocomplete="off" /></label><label class="large-field"><span>Qwen API Key</span><input id="roleplay-setup-key" type="password" placeholder="粘贴 DashScope API Key" autocomplete="off" /></label><label class="toggle-row"><input id="roleplay-setup-enabled" type="checkbox" checked /><span>启用 Qwen Character 分流</span></label><button class="primary-action" type="submit">安全保存并重启 Core</button></form>
+              <output id="roleplay-setup-result" class="inline-result" data-state="idle">Qwen 只会收到闲聊、倾诉与情绪对话；它无法调用 MCP、读取文件或控制设备。</output>
             </article>
             <article class="content-card setup-guide-card">
               <div class="section-heading"><div><h2>私有中继连接</h2><p>只使用你自己部署的中继；不依赖开发者服务器</p></div></div>

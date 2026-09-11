@@ -42,7 +42,7 @@ function navigate(page) {
     void refreshVoiceLog();
     void refreshPairedDevices();
   }
-  if (page === "settings") { void refreshAgentSetup(); void refreshRelaySetup(); void refreshQuitBehavior(); }
+  if (page === "settings") { void refreshAgentSetup(); void refreshRoleplaySetup(); void refreshRelaySetup(); void refreshQuitBehavior(); }
 }
 
 for (const button of $$(`[data-page]`)) button.addEventListener("click", () => navigate(button.dataset.page));
@@ -352,6 +352,28 @@ async function refreshAgentSetup() {
   }
 }
 
+async function refreshRoleplaySetup() {
+  const detail = $("#roleplay-setup-detail");
+  if (!detail) return;
+  const badge = $("#roleplay-setup-badge");
+  try {
+    const status = await invoke("core_roleplay_setup_status");
+    const active = status.supported && status.enabled && status.configured;
+    badge.dataset.state = active ? "online" : "offline";
+    badge.textContent = active ? "已启用" : (status.configured ? "已保存" : (status.supported ? "未配置" : "远端主机"));
+    detail.textContent = status.detail || "正在等待配置";
+    $("#roleplay-setup-url").textContent = status.baseUrl || "—";
+    $("#roleplay-setup-model").textContent = status.model || "—";
+    if (status.baseUrl) $("#roleplay-setup-base-url").value = status.baseUrl;
+    if (status.model) $("#roleplay-setup-model-input").value = status.model;
+    $("#roleplay-setup-enabled").checked = Boolean(status.enabled);
+  } catch (error) {
+    badge.dataset.state = "error";
+    badge.textContent = "检查失败";
+    detail.textContent = error instanceof Error ? error.message : String(error);
+  }
+}
+
 async function refreshRelaySetup() {
   const detail = $("#relay-setup-detail");
   if (!detail) return;
@@ -375,6 +397,30 @@ $("#agent-setup-form").addEventListener("submit", async (event) => {
     result.dataset.state = "success";
     result.textContent = "模型已配置，Core 正在后台重启。无需复制命令或再次粘贴 Key。";
     await refreshAgentSetup();
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally { button.disabled = false; }
+});
+
+$("#roleplay-setup-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = $("#roleplay-setup-form button");
+  const result = $("#roleplay-setup-result");
+  button.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = "正在安全保存 Qwen Character 配置并重启 Core…";
+  try {
+    await invoke("core_configure_roleplay", {
+      baseUrl: $("#roleplay-setup-base-url").value,
+      model: $("#roleplay-setup-model-input").value,
+      apiKey: $("#roleplay-setup-key").value,
+      enabled: $("#roleplay-setup-enabled").checked,
+    });
+    $("#roleplay-setup-key").value = "";
+    result.dataset.state = "success";
+    result.textContent = "Qwen Character 已保存；闲聊与情绪对话会按开关分流，工具任务仍留在 DeepSeek Harness。";
+    await refreshRoleplaySetup();
   } catch (error) {
     result.dataset.state = "error";
     result.textContent = error instanceof Error ? error.message : String(error);
