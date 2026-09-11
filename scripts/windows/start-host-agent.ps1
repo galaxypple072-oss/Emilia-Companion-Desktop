@@ -111,22 +111,24 @@ function TestCoreReady {
   return (TestListeningPort 8765) -and (TestListeningPort 8766)
 }
 
-function VoiceModuleEnabled {
-  # Fresh installs do not create voice tasks, so the optional module remains
-  # off until the user installs/enables it. Existing configured installations
-  # retain their working voice stack when first upgraded.
+function ModuleEnabled {
+  param([string]$Name)
+  # QQ and voice are optional resource providers. A Core-only host should not
+  # start either one merely because old task files or a runtime folder exist.
   if (Test-Path -LiteralPath $moduleConfigPath) {
     try {
       $settings = Get-Content -LiteralPath $moduleConfigPath -Raw | ConvertFrom-Json
-      if ($null -ne $settings.voiceEnabled) { return [bool]$settings.voiceEnabled }
+      if ($null -ne $settings.$Name) { return [bool]$settings.$Name }
     } catch { WriteAgentLog "WARN" "host module settings could not be read" }
   }
-  return ($null -ne (Get-ScheduledTask -TaskName "Emilia Voice Service" -ErrorAction SilentlyContinue)) -or (Test-Path -LiteralPath $voiceRoot)
+  return $false
 }
 
 function Get-HostState {
   param([bool]$Repair)
-  $napCatRunning = if ($Repair) { EnsureNapCat } else {
+  $qqEnabled = ModuleEnabled "qqEnabled"
+  $voiceEnabled = ModuleEnabled "voiceEnabled"
+  $napCatRunning = if (-not $qqEnabled) { $false } elseif ($Repair) { EnsureNapCat } else {
     $null -ne (Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { $_.ExecutablePath -eq $napCatPath } | Select-Object -First 1)
   }
   $tasks = @{}
@@ -135,9 +137,12 @@ function Get-HostState {
   # removes the logon race where four scheduled tasks all started at once.
   $tasks[$coreTaskName] = if ($Repair) { EnsureTask -Name $coreTaskName } else { GetTaskState -Name $coreTaskName }
   $coreReady = TestCoreReady
-  $voiceEnabled = VoiceModuleEnabled
   foreach ($name in $workerTaskNames) {
     if (-not $voiceEnabled -and ($name -eq "Emilia Voice Service" -or $name -eq "Emilia Voice Worker")) {
+      $tasks[$name] = @{ ok = $true; detail = "disabled" }
+      continue
+    }
+    if (-not $qqEnabled -and $name -eq "Emilia QQ Worker") {
       $tasks[$name] = @{ ok = $true; detail = "disabled" }
       continue
     }
@@ -157,6 +162,7 @@ function Get-HostState {
       onebotWebSocket = TestListeningPort 3001
       coreBridge = TestListeningPort 8765
       coreControl = TestListeningPort 8766
+      qqEnabled = $qqEnabled
       voiceEnabled = $voiceEnabled
       voiceEngine = TestListeningPort 9872
       voiceService = TestListeningPort 9873
