@@ -102,6 +102,14 @@ struct RelaySetupStatus {
     detail: String,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct QqSetupStatus {
+    supported: bool, configured: bool, napcat_installed: bool, napcat_running: bool,
+    http_listening: bool, websocket_listening: bool, http_url: String, websocket_url: String,
+    owner_qq: String, detail: String,
+}
+
 fn companion_env_path() -> PathBuf {
     std::env::var_os("LOCALAPPDATA")
         .map(PathBuf::from)
@@ -153,6 +161,21 @@ fn update_companion_env(entries: &[(&str, String)]) -> Result<(), String> {
         .collect::<Vec<_>>();
     lines.extend(entries.iter().map(|(key, value)| format!("{key}={value}")));
     fs::write(&path, format!("{}\n", lines.join("\n"))).map_err(|error| format!("无法保存 Core 配置：{error}"))
+}
+
+fn companion_env_value(text: &str, key: &str) -> String {
+    text.lines().find_map(|line| line.strip_prefix(&format!("{key}=")).map(str::trim)).unwrap_or("").trim_matches('"').to_string()
+}
+
+#[cfg(target_os = "windows")]
+fn update_host_module_enabled(name: &str, enabled: bool) -> Result<(), String> {
+    let directory = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_default().join("PersonalCompanion");
+    fs::create_dir_all(&directory).map_err(|error| format!("无法保存主机模块设置：{error}"))?;
+    let path = directory.join("host-modules.json");
+    let mut settings = fs::read_to_string(&path).ok().and_then(|text| serde_json::from_str::<serde_json::Map<String, serde_json::Value>>(&text).ok()).unwrap_or_default();
+    settings.insert("version".to_string(), serde_json::Value::from(1));
+    settings.insert(name.to_string(), serde_json::Value::from(enabled));
+    fs::write(path, format!("{}\n", serde_json::to_string(&settings).map_err(|error| format!("无法编码主机模块设置：{error}"))?)).map_err(|error| format!("无法保存主机模块设置：{error}"))
 }
 
 #[cfg(target_os = "windows")]
@@ -410,9 +433,7 @@ fn voice_module_status() -> Result<VoiceModuleStatus, String> {
 fn voice_set_module_enabled(enabled: bool) -> Result<VoiceModuleStatus, String> {
     #[cfg(target_os = "windows")]
     {
-        let directory = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_default().join("PersonalCompanion");
-        fs::create_dir_all(&directory).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
-        fs::write(directory.join("host-modules.json"), format!("{{\"version\":1,\"voiceEnabled\":{enabled}}}\n")).map_err(|error| format!("无法保存语音模块设置：{error}"))?;
+        update_host_module_enabled("voiceEnabled", enabled)?;
         let action = if enabled {
             "Enable-ScheduledTask -TaskName 'Emilia Voice Service' -ErrorAction SilentlyContinue; Enable-ScheduledTask -TaskName 'Emilia Voice Worker' -ErrorAction SilentlyContinue"
         } else {
@@ -689,7 +710,7 @@ fn core_agent_setup_status() -> Result<AgentSetupStatus, String> {
     {
         let env_path = companion_env_path();
         let text = fs::read_to_string(env_path).unwrap_or_default();
-        let value = |key: &str| text.lines().find_map(|line| line.strip_prefix(&format!("{key}=")).map(str::trim)).unwrap_or("").trim_matches('"').to_string();
+        let value = |key: &str| companion_env_value(&text, key);
         let base_url = value("AGENT_BASE_URL");
         let model = value("AGENT_MODEL");
         let configured = !value("AGENT_API_KEY").is_empty() && !base_url.is_empty() && !model.is_empty();
@@ -763,6 +784,57 @@ fn core_configure_roleplay(base_url: String, model: String, api_key: String, ena
     }
     #[cfg(not(target_os = "windows"))]
     { let _ = (base_url, model, api_key, enabled); Err("请在托管 Core 的 Windows 设备上配置 Qwen Character".to_string()) }
+}
+
+#[tauri::command]
+fn core_qq_setup_status() -> Result<QqSetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let text = fs::read_to_string(companion_env_path()).unwrap_or_default();
+        let http_url = companion_env_value(&text, "ONEBOT_HTTP_URL");
+        let websocket_url = companion_env_value(&text, "ONEBOT_WS_URL");
+        let owner_qq = companion_env_value(&text, "ONEBOT_ALLOWED_QQ");
+        let marked = companion_env_value(&text, "QQ_BOT_CONFIGURED").eq_ignore_ascii_case("true");
+        let configured = marked || (!companion_env_value(&text, "ONEBOT_ACCESS_TOKEN").is_empty() && owner_qq != "123456789" && owner_qq.chars().all(|ch| ch.is_ascii_digit()) && owner_qq.len() >= 5);
+        let raw = powershell_output(r#"$napcat = Test-Path -LiteralPath 'C:\Program Files\NapCatQQ Desktop\NapCatQQ-Desktop.exe'
+$running = $null -ne (Get-Process -Name 'NapCatQQ-Desktop' -ErrorAction SilentlyContinue | Select-Object -First 1)
+$http = $null -ne (Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1)
+$ws = $null -ne (Get-NetTCPConnection -LocalPort 3001 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1)
+@{napcatInstalled=$napcat;napcatRunning=$running;httpListening=$http;websocketListening=$ws}|ConvertTo-Json -Compress"#)?;
+        let status: serde_json::Value = serde_json::from_str(&raw).map_err(|_| "无法读取 NapCat 本机状态".to_string())?;
+        let napcat_installed = status["napcatInstalled"].as_bool().unwrap_or(false);
+        let napcat_running = status["napcatRunning"].as_bool().unwrap_or(false);
+        let http_listening = status["httpListening"].as_bool().unwrap_or(false);
+        let websocket_listening = status["websocketListening"].as_bool().unwrap_or(false);
+        let detail = if !napcat_installed { "未检测到 NapCat。先安装并登录专用 QQ，再回到这里保存配置。".to_string() } else if !configured { "NapCat 已检测到：填写 OneBot Token 和你的主人 QQ 后保存即可。".to_string() } else if http_listening && websocket_listening { "QQ Bot 已就绪：Core 会通过本机 OneBot 直接收发消息。".to_string() } else if napcat_running { "NapCat 正在运行，但 OneBot 3000/3001 尚未监听；请在 NapCat 打开 HTTP 与反向 WebSocket。".to_string() } else { "配置已保存。启动 NapCat 并登录专用 QQ，等待 OneBot 端口就绪。".to_string() };
+        return Ok(QqSetupStatus { supported: true, configured, napcat_installed, napcat_running, http_listening, websocket_listening, http_url, websocket_url, owner_qq, detail });
+    }
+    #[cfg(not(target_os = "windows"))]
+    Ok(QqSetupStatus { supported: false, configured: false, napcat_installed: false, napcat_running: false, http_listening: false, websocket_listening: false, http_url: String::new(), websocket_url: String::new(), owner_qq: String::new(), detail: "请在托管 Core 的 Windows 设备上配置 NapCat QQ Bot。".to_string() })
+}
+
+#[tauri::command]
+fn core_configure_qq(http_url: String, websocket_url: String, access_token: String, owner_qq: String) -> Result<QqSetupStatus, String> {
+    #[cfg(target_os = "windows")]
+    {
+        let http = url::Url::parse(http_url.trim()).map_err(|_| "OneBot HTTP 地址格式不正确".to_string())?;
+        let ws = url::Url::parse(websocket_url.trim()).map_err(|_| "OneBot WebSocket 地址格式不正确".to_string())?;
+        let local_host = |host: Option<&str>| matches!(host, Some("127.0.0.1") | Some("localhost"));
+        if !["http", "https"].contains(&http.scheme()) || !local_host(http.host_str()) || !http.username().is_empty() || http.password().is_some() { return Err("OneBot HTTP 地址必须是本机 http://127.0.0.1:3000 或 localhost 地址".to_string()); }
+        if !["ws", "wss"].contains(&ws.scheme()) || !local_host(ws.host_str()) || !ws.username().is_empty() || ws.password().is_some() { return Err("OneBot WebSocket 地址必须是本机 ws://127.0.0.1:3001 或 localhost 地址".to_string()); }
+        let token = access_token.trim();
+        if token.len() < 8 || token.len() > 512 || !token.bytes().all(|byte| byte.is_ascii_graphic()) { return Err("请填写 NapCat 中设置的 OneBot Token（不含空格）".to_string()); }
+        let owner = owner_qq.trim();
+        if !(5..=12).contains(&owner.len()) || !owner.chars().all(|ch| ch.is_ascii_digit()) { return Err("主人 QQ 需为 5–12 位数字；只有它能与机器人私聊。".to_string()); }
+        update_companion_env(&[("ONEBOT_HTTP_URL", http.to_string()), ("ONEBOT_WS_URL", ws.to_string()), ("ONEBOT_ACCESS_TOKEN", token.to_string()), ("ONEBOT_ALLOWED_QQ", owner.to_string()), ("ONEBOT_REQUEST_TIMEOUT_MS", "10000".to_string()), ("QQ_BOT_CONFIGURED", "true".to_string())])?;
+        update_host_module_enabled("qqEnabled", true)?;
+        restart_local_core_after_configuration()?;
+        let _ = powershell_output(&host_agent_repair_command());
+        write_app_log("qq", "NapCat OneBot configuration saved");
+        return core_qq_setup_status();
+    }
+    #[cfg(not(target_os = "windows"))]
+    { let _ = (http_url, websocket_url, access_token, owner_qq); Err("请在托管 Core 的 Windows 设备上配置 NapCat QQ Bot".to_string()) }
 }
 
 #[tauri::command]
@@ -1498,6 +1570,8 @@ pub fn run() {
             core_configure_agent,
             core_roleplay_setup_status,
             core_configure_roleplay,
+            core_qq_setup_status,
+            core_configure_qq,
             core_relay_setup_status,
             core_configure_relay,
             core_list_paired_devices,

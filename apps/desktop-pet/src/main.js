@@ -42,7 +42,7 @@ function navigate(page) {
     void refreshVoiceLog();
     void refreshPairedDevices();
   }
-  if (page === "settings") { void refreshAgentSetup(); void refreshRoleplaySetup(); void refreshRelaySetup(); void refreshQuitBehavior(); }
+  if (page === "settings") { void refreshAgentSetup(); void refreshRoleplaySetup(); void refreshQqSetup(); void refreshRelaySetup(); void refreshQuitBehavior(); }
 }
 
 for (const button of $$(`[data-page]`)) button.addEventListener("click", () => navigate(button.dataset.page));
@@ -384,6 +384,26 @@ async function refreshRelaySetup() {
   } catch (error) { detail.textContent = error instanceof Error ? error.message : String(error); }
 }
 
+async function refreshQqSetup() {
+  const detail = $("#qq-setup-detail");
+  if (!detail) return;
+  const badge = $("#qq-setup-badge");
+  try {
+    const status = await invoke("core_qq_setup_status");
+    const online = status.supported && status.configured && status.httpListening && status.websocketListening;
+    badge.dataset.state = online ? "online" : "offline";
+    badge.textContent = online ? "已就绪" : (status.configured ? "等待 NapCat" : (status.supported ? "未配置" : "远端主机"));
+    detail.textContent = status.detail || "正在检查 NapCat";
+    if (status.httpUrl) $("#qq-setup-http-url").value = status.httpUrl;
+    if (status.websocketUrl) $("#qq-setup-ws-url").value = status.websocketUrl;
+    if (status.ownerQq && status.ownerQq !== "123456789") $("#qq-setup-owner").value = status.ownerQq;
+  } catch (error) {
+    badge.dataset.state = "error";
+    badge.textContent = "检查失败";
+    detail.textContent = error instanceof Error ? error.message : String(error);
+  }
+}
+
 $("#agent-setup-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const button = $("#agent-setup-form button");
@@ -421,6 +441,30 @@ $("#roleplay-setup-form").addEventListener("submit", async (event) => {
     result.dataset.state = "success";
     result.textContent = "Qwen Character 已保存；闲聊与情绪对话会按开关分流，工具任务仍留在 DeepSeek Harness。";
     await refreshRoleplaySetup();
+  } catch (error) {
+    result.dataset.state = "error";
+    result.textContent = error instanceof Error ? error.message : String(error);
+  } finally { button.disabled = false; }
+});
+
+$("#qq-setup-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = $("#qq-setup-form button");
+  const result = $("#qq-setup-result");
+  button.disabled = true;
+  result.dataset.state = "idle";
+  result.textContent = "正在保存 OneBot 配置并重启 Core…";
+  try {
+    await invoke("core_configure_qq", {
+      httpUrl: $("#qq-setup-http-url").value,
+      websocketUrl: $("#qq-setup-ws-url").value,
+      accessToken: $("#qq-setup-token").value,
+      ownerQq: $("#qq-setup-owner").value,
+    });
+    $("#qq-setup-token").value = "";
+    result.dataset.state = "success";
+    result.textContent = "已保存。Core 会直接连接本机 NapCat；若端口还没亮，请在 NapCat 开启 OneBot HTTP 和 WebSocket。";
+    await refreshQqSetup();
   } catch (error) {
     result.dataset.state = "error";
     result.textContent = error instanceof Error ? error.message : String(error);

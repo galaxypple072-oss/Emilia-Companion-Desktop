@@ -1,6 +1,6 @@
 [package]
 name = "personal-companion-desktop"
-version = "0.0.4"
+version = "0.0.5"
 description = "Cross-platform desktop companion shell"
 authors = ["Personal Companion"]
 edition = "2021"

@@ -71,12 +71,14 @@ test("settings guide supports both model APIs plus LAN and private-relay connect
   assert.match(html, /id=["']agent-setup-card["']/);
   assert.match(html, /id=["']agent-setup-form["']/);
   assert.match(html, /id=["']roleplay-setup-form["']/);
+  assert.match(html, /id=["']qq-setup-form["']/);
   assert.match(html, /id=["']relay-setup-form["']/);
   assert.match(html, /id=["']core-relay-code-create["']/);
   assert.doesNotMatch(html, /configure-agent-windows\.ps1/);
   assert.match(main, /invitation\.mode === "relay"/);
   assert.match(main, /core_configure_agent/);
   assert.match(main, /core_configure_roleplay/);
+  assert.match(main, /core_configure_qq/);
   assert.match(main, /core_configure_relay/);
   assert.match(main, /core_create_relay_connection_code/);
   assert.match(rust, /fn core_create_relay_connection_code/);
@@ -84,6 +86,8 @@ test("settings guide supports both model APIs plus LAN and private-relay connect
   assert.match(rust, /fn core_configure_agent/);
   assert.match(rust, /fn core_roleplay_setup_status/);
   assert.match(rust, /fn core_configure_roleplay/);
+  assert.match(rust, /fn core_qq_setup_status/);
+  assert.match(rust, /fn core_configure_qq/);
   assert.match(rust, /fn core_configure_relay/);
 });
 

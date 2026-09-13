@@ -18,7 +18,7 @@ $moduleConfigPath = Join-Path $env:LOCALAPPDATA "PersonalCompanion\host-modules.
 $napCatPath = "C:\Program Files\NapCatQQ Desktop\NapCatQQ-Desktop.exe"
 $engineLauncher = Join-Path $projectRoot "scripts\windows\start-gpt-sovits-engine.cmd"
 $coreTaskName = "Emilia Core Service"
-$workerTaskNames = @("Emilia Voice Service", "Emilia Voice Worker", "Emilia QQ Worker")
+$workerTaskNames = @("Emilia Voice Service", "Emilia Voice Worker")
 $lastStart = @{}
 
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
@@ -139,10 +139,6 @@ function Get-HostState {
   $coreReady = TestCoreReady
   foreach ($name in $workerTaskNames) {
     if (-not $voiceEnabled -and ($name -eq "Emilia Voice Service" -or $name -eq "Emilia Voice Worker")) {
-      $tasks[$name] = @{ ok = $true; detail = "disabled" }
-      continue
-    }
-    if (-not $qqEnabled -and $name -eq "Emilia QQ Worker") {
       $tasks[$name] = @{ ok = $true; detail = "disabled" }
       continue
     }
