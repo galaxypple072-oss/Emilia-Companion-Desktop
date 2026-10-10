@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "characters": [
+    {
+      "id": "rem",
+      "name": "雷姆",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/rem/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 3,
+        "Smile": 3,
+        "Surprise": 2,
+        "Think": 2,
+        "Angry": 2,
+        "Nod": 2,
+        "Shy": 2,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 96,
+      "copiedMotionFiles": 96
+    },
+    {
+      "id": "ram",
+      "name": "拉姆",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/ram/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 3,
+        "Smile": 2,
+        "Surprise": 2,
+        "Think": 2,
+        "Angry": 2,
+        "Nod": 2,
+        "Shy": 2,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 69,
+      "copiedMotionFiles": 69
+    },
+    {
+      "id": "beatrice",
+      "name": "贝蒂",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/beatrice/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 3,
+        "Smile": 2,
+        "Surprise": 2,
+        "Think": 2,
+        "Angry": 3,
+        "Nod": 2,
+        "Shy": 2,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 74,
+      "copiedMotionFiles": 74
+    },
+    {
+      "id": "felt",
+      "name": "菲鲁特",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/felt/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 3,
+        "Smile": 2,
+        "Surprise": 2,
+        "Think": 2,
+        "Angry": 2,
+        "Nod": 2,
+        "Shy": 2,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 59,
+      "copiedMotionFiles": 59
+    },
+    {
+      "id": "crusch",
+      "name": "库珥修",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/crusch/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 2,
+        "Smile": 1,
+        "Surprise": 2,
+        "Think": 1,
+        "Angry": 1,
+        "Nod": 1,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 43,
+      "copiedMotionFiles": 43
+    },
+    {
+      "id": "anastasia",
+      "name": "安娜塔西亚",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/anastasia/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 2,
+        "Smile": 1,
+        "Surprise": 1,
+        "Think": 1,
+        "Angry": 1,
+        "Nod": 2,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 41,
+      "copiedMotionFiles": 41
+    },
+    {
+      "id": "echidna",
+      "name": "爱姬多娜",
+      "outfit": "classic",
+      "model": "./assets/live2d/characters/echidna/classic/model.model3.json",
+      "motionGroups": {
+        "Idle": 2,
+        "Smile": 3,
+        "Surprise": 2,
+        "Think": 1,
+        "Angry": 1,
+        "Nod": 1,
+        "Shy": 1,
+        "Talk": 3
+      },
+      "textureCount": 1,
+      "motionCount": 68,
+      "copiedMotionFiles": 68
+    }
+  ]
+}
